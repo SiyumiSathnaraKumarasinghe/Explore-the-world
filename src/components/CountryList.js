@@ -183,21 +183,31 @@ const CountryList = () => {
 
     const handleDownloadPDF = () => {
         const doc = new jsPDF();
-        let yOffset = 10;
+        let yOffset = 15;
 
-        doc.setFontSize(20);
-        doc.text('Document List', 10, yOffset);
-        yOffset += 10;
+        doc.setFontSize(18);
+        doc.setTextColor(34, 139, 34); // ForestGreen title
+        doc.setFont("helvetica", "bold");
+        doc.text('Document List', 14, yOffset);
+        yOffset += 12;
 
         if (documentList.length === 0) {
             doc.setFontSize(12);
-            doc.text('No countries added to document list.', 10, yOffset);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(0, 0, 0);
+            doc.text('No countries added to document list.', 14, yOffset);
         } else {
             documentList.forEach((country, index) => {
-                doc.setFontSize(16);
-                doc.text(country.name.common, 10, yOffset);
-                yOffset += 10;
+                // Country Title Box
+                doc.setFillColor(220, 248, 198); // Light green
+                doc.rect(10, yOffset - 3, 190, 10, 'F');
+                doc.setTextColor(0, 100, 0);
+                doc.setFontSize(14);
+                doc.setFont("helvetica", "bold");
+                doc.text(country.name.common, 14, yOffset + 4);
+                yOffset += 12;
 
+                // Details
                 const details = [
                     { label: 'Capital', value: country.capital || 'N/A' },
                     { label: 'Region', value: country.region },
@@ -209,16 +219,25 @@ const CountryList = () => {
                     { label: 'Borders', value: country.borders ? country.borders.join(', ') : 'None' },
                 ];
 
-                doc.setFontSize(12);
+                doc.setFontSize(11);
+                doc.setFont("helvetica", "normal");
+                doc.setTextColor(0, 0, 0);
+
                 details.forEach((item) => {
-                    doc.text(`${item.label}: ${item.value}`, 10, yOffset);
-                    yOffset += 10;
+                    doc.text(`${item.label}:`, 14, yOffset);
+                    doc.text(`${item.value}`, 60, yOffset);
+                    yOffset += 8;
+
+                    if (yOffset > 270) {
+                        doc.addPage();
+                        yOffset = 15;
+                    }
                 });
 
-                yOffset += 10;
+                yOffset += 6; // spacing between countries
                 if (yOffset > 270) {
                     doc.addPage();
-                    yOffset = 10;
+                    yOffset = 15;
                 }
             });
         }
