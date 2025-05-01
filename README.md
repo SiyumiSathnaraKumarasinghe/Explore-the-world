@@ -67,8 +67,9 @@ Powered by: [REST Countries API](https://restcountries.com)
 
 Clone the repository
 ```bash
-git clone https://github.com/SE1020-IT2070-OOP-DSA-25/af-2-SiyumiSathnaraKumarasinghe
+git clone https://github.com/SiyumiSathnaraKumarasinghe/Explore-the-world.git
 
+```
 
 Install dependencies
 ```bash
