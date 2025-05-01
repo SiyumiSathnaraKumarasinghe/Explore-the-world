@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Grid, Card, CardContent, Typography, TextField, FormControl, Select, MenuItem, InputLabel, Dialog, DialogContent, DialogTitle, Button, IconButton, Box } from '@mui/material';
-import { Favorite, Search, Brightness4, Brightness7, LocationOn } from '@mui/icons-material';
+import { Favorite, Search, Brightness4, Brightness7, LocationOn, Description } from '@mui/icons-material';
 import { blue, red, green } from '@mui/material/colors';
+import jsPDF from 'jspdf';
 
 const CountryList = () => {
     const [countries, setCountries] = useState([]);
@@ -17,6 +18,8 @@ const CountryList = () => {
     const [darkMode, setDarkMode] = useState(false);
     const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
     const [showMap, setShowMap] = useState(false);
+    const [documentList, setDocumentList] = useState([]);
+    const [showDocumentDialog, setShowDocumentDialog] = useState(false);
 
     // Fetch countries data from multiple endpoints of the REST Countries API
     useEffect(() => {
@@ -60,10 +63,12 @@ const CountryList = () => {
         const storedLoginState = localStorage.getItem('isLoggedIn') === 'true'; // Convert to boolean
         const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
         const storedTheme = localStorage.getItem('darkMode') === 'true'; // Convert to boolean
+        const storedDocumentList = JSON.parse(localStorage.getItem('documentList')) || [];
 
         setIsLoggedIn(storedLoginState);
         setFavorites(storedFavorites);
         setDarkMode(storedTheme);
+        setDocumentList(storedDocumentList);
     }, []);
 
     // Handle theme toggle
@@ -113,6 +118,30 @@ const CountryList = () => {
         }, 3000);
     };
 
+    // Handle document list addition/removal
+    const handleDocumentClick = (country) => {
+        const isInDocumentList = documentList.some(doc => doc.name.common === country.name.common);
+
+        if (isInDocumentList) {
+            // Remove from document list
+            const updatedDocumentList = documentList.filter(doc => doc.name.common !== country.name.common);
+            setDocumentList(updatedDocumentList);
+            localStorage.setItem('documentList', JSON.stringify(updatedDocumentList));
+            setAlertMessage(`${country.name.common} removed from document list`);
+        } else {
+            // Add to document list
+            const updatedDocumentList = [...documentList, country];
+            setDocumentList(updatedDocumentList);
+            localStorage.setItem('documentList', JSON.stringify(updatedDocumentList));
+            setAlertMessage(`${country.name.common} added to document list`);
+        }
+
+        // Clear the alert message after 3 seconds
+        setTimeout(() => {
+            setAlertMessage('');
+        }, 3000);
+    };
+
     // Handle favorites filter toggle
     const handleFavoritesFilterToggle = () => {
         setShowOnlyFavorites(!showOnlyFavorites);
@@ -142,6 +171,59 @@ const CountryList = () => {
 
     const toggleMap = () => {
         setShowMap(!showMap);
+    };
+
+    const handleDocumentDialogOpen = () => {
+        setShowDocumentDialog(true);
+    };
+
+    const handleDocumentDialogClose = () => {
+        setShowDocumentDialog(false);
+    };
+
+    const handleDownloadPDF = () => {
+        const doc = new jsPDF();
+        let yOffset = 10;
+
+        doc.setFontSize(20);
+        doc.text('Document List', 10, yOffset);
+        yOffset += 10;
+
+        if (documentList.length === 0) {
+            doc.setFontSize(12);
+            doc.text('No countries added to document list.', 10, yOffset);
+        } else {
+            documentList.forEach((country, index) => {
+                doc.setFontSize(16);
+                doc.text(country.name.common, 10, yOffset);
+                yOffset += 10;
+
+                const details = [
+                    { label: 'Capital', value: country.capital || 'N/A' },
+                    { label: 'Region', value: country.region },
+                    { label: 'Subregion', value: country.subregion || 'N/A' },
+                    { label: 'Country Code', value: country.cca3 },
+                    { label: 'Population', value: country.population.toLocaleString() },
+                    { label: 'Languages', value: Object.values(country.languages || {}).join(', ') },
+                    { label: 'Timezones', value: country.timezones?.join(', ') },
+                    { label: 'Borders', value: country.borders ? country.borders.join(', ') : 'None' },
+                ];
+
+                doc.setFontSize(12);
+                details.forEach((item) => {
+                    doc.text(`${item.label}: ${item.value}`, 10, yOffset);
+                    yOffset += 10;
+                });
+
+                yOffset += 10;
+                if (yOffset > 270) {
+                    doc.addPage();
+                    yOffset = 10;
+                }
+            });
+        }
+
+        doc.save('document_list.pdf');
     };
 
     const filteredCountries = countries.filter(country =>
@@ -177,7 +259,7 @@ const CountryList = () => {
                 }}
             >
 
-                <               h1 style={{
+                <h1 style={{
                     textAlign: 'center',
                     textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
                     fontFamily: 'Poppins, sans-serif',
@@ -256,6 +338,22 @@ const CountryList = () => {
                         >
                             <Favorite style={{
                                 color: showOnlyFavorites ? red[500] : darkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'
+                            }} />
+                        </IconButton>
+
+                        {/* Document List Button */}
+                        <IconButton
+                            onClick={handleDocumentDialogOpen}
+                            style={{
+                                backgroundColor: documentList.length > 0 ? 'rgba(0, 128, 0, 0.2)' : darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
+                                marginRight: window.innerWidth < 600 ? '0' : '10px',
+                                width: '48px',
+                                height: '48px',
+                                alignSelf: window.innerWidth < 600 ? 'flex-start' : 'center'
+                            }}
+                        >
+                            <Description style={{
+                                color: documentList.length > 0 ? green[500] : darkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'
                             }} />
                         </IconButton>
 
@@ -455,13 +553,14 @@ const CountryList = () => {
                                         />
                                     </Box>
 
-                                    {/* Favorite Button */}
+                                    {/* Favorite and Document Buttons */}
                                     <Box
                                         sx={{
                                             display: 'flex',
                                             justifyContent: 'center',
                                             alignItems: 'center',
                                             mt: 1,
+                                            gap: '10px'
                                         }}
                                     >
                                         <IconButton
@@ -480,9 +579,22 @@ const CountryList = () => {
                                                 }}
                                             />
                                         </IconButton>
-                                        <Typography variant="body2" sx={{ ml: 1, color: darkMode ? '#ffffff' : 'inherit' }}>
-                                            Favorites
-                                        </Typography>
+                                        <IconButton
+                                            onClick={e => {
+                                                e.stopPropagation();
+                                                handleDocumentClick(country);
+                                            }}
+                                        >
+                                            <Description
+                                                sx={{
+                                                    color: documentList.some(
+                                                        doc => doc.name.common === country.name.common
+                                                    )
+                                                        ? green[500]
+                                                        : darkMode ? 'rgba(255, 255, 255, 0.5)' : 'gray',
+                                                }}
+                                            />
+                                        </IconButton>
                                     </Box>
                                 </CardContent>
                             </Card>
@@ -653,14 +765,10 @@ const CountryList = () => {
                                 </div>
                             </div>
 
-
-
-
                             {/* Right Column - Country Info or Map */}
                             <div style={{
                                 flex: showMap ? '1' : '0.6',
                                 padding: '25px',
-
                                 backgroundColor: darkMode ? '#2d2d2d' : 'white'
                             }}>
                                 {showMap ? (
@@ -738,6 +846,179 @@ const CountryList = () => {
                                 )}
                             </div>
                         </div>
+                    </DialogContent>
+                </Dialog>
+            )}
+
+            {/* Document List Dialog */}
+            {showDocumentDialog && (
+                <Dialog
+                    open={showDocumentDialog}
+                    onClose={handleDocumentDialogClose}
+                    maxWidth="md"
+                    fullWidth
+                    PaperProps={{
+                        style: {
+                            borderRadius: 15,
+                            overflow: 'hidden',
+                            boxShadow: '0 12px 32px rgba(0,0,0,0.3)',
+                            backgroundColor: darkMode ? '#1e1e1e' : '#fff',
+                        }
+                    }}
+                >
+                    <DialogTitle
+                        style={{
+                            fontWeight: 'bold',
+                            fontSize: '30px',
+                            textAlign: 'center',
+                            background: 'linear-gradient(to right, #4caf50, #81c784)',
+                            color: 'black',
+                            padding: '25px 0',
+                            border: '2px solid #4caf50',
+                            position: 'relative',
+                            borderBottom: '1px solid rgba(255,255,255,0.2)',
+                            textShadow: '0px 2px 4px rgba(0,0,0,0.2)',
+                            fontFamily: 'Poppins, sans-serif',
+                            letterSpacing: '1px',
+                        }}
+                    >
+                        <span style={{
+                            position: 'absolute',
+                            right: '15px',
+                            top: '15px',
+                            cursor: 'pointer',
+                            fontSize: '24px',
+                            opacity: '0.8',
+                            transition: 'opacity 0.2s',
+                            ':hover': { opacity: '1' }
+                        }}
+                            onClick={handleDocumentDialogClose}
+                        >
+                            ×
+                        </span>
+                        📋 Document List
+                    </DialogTitle>
+                    <DialogContent
+                        style={{
+                            backgroundColor: darkMode ? '#696464' : '#fff8ef',
+                            padding: '25px',
+                            border: '2px solid #4caf50',
+                            gap: '15px',
+                            fontSize: '16px',
+                            transition: 'all 0.3s ease-in-out',
+                            color: darkMode ? '#ffffff' : 'inherit',
+                            maxHeight: '70vh',
+                            overflowY: 'auto'
+                        }}
+                    >
+                        {documentList.length === 0 ? (
+                            <Typography>No countries added to document list.</Typography>
+                        ) : (
+                            <>
+                                <Button
+                                    onClick={handleDownloadPDF}
+                                    variant="contained"
+                                    style={{
+                                        backgroundColor: green[500],
+                                        color: 'white',
+                                        borderRadius: '10px',
+                                        marginBottom: '20px',
+                                        padding: '10px 20px'
+                                    }}
+                                >
+                                    Download PDF
+                                </Button>
+                                {documentList.map((country, index) => (
+                                    <div key={index} style={{ marginBottom: '20px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <img
+                                                    src={country.flags.png}
+                                                    alt={`${country.name.common} flag`}
+                                                    style={{ width: '40px', height: 'auto', marginRight: '10px', borderRadius: '4px' }}
+                                                />
+                                                <Typography variant="h5" style={{
+                                                    fontWeight: 'bold',
+                                                    color: darkMode ? '#90caf9' : '#1976d2'
+                                                }}>
+                                                    {country.name.common}
+                                                </Typography>
+                                            </div>
+                                            <Button
+                                                onClick={() => setDocumentList(documentList.filter((_, i) => i !== index))}
+                                                variant="contained"
+                                                style={{
+                                                    backgroundColor: '#f44336',
+                                                    color: 'white',
+                                                    borderRadius: '10px',
+                                                    padding: '5px 15px'
+                                                }}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </div>
+                                        <div style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                            gap: '15px'
+                                        }}>
+                                            {[
+                                                { icon: '🏛️', label: 'Capital', value: country.capital || 'N/A' },
+                                                { icon: '🗺️', label: 'Region', value: country.region },
+                                                { icon: '🧭', label: 'Subregion', value: country.subregion || 'N/A' },
+                                                { icon: '🆔', label: 'Country Code', value: country.cca3 },
+                                                { icon: '👥', label: 'Population', value: country.population.toLocaleString() },
+                                                { icon: '🗣️', label: 'Languages', value: Object.values(country.languages || {}).join(', ') },
+                                                { icon: '⏰', label: 'Timezones', value: country.timezones?.join(', ') },
+                                                { icon: '🌐', label: 'Borders', value: country.borders ? country.borders.join(', ') : 'None' },
+                                            ].map((item, index) => (
+                                                <div
+                                                    key={index}
+                                                    style={{
+                                                        backgroundColor: darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(76,175,80,0.3)',
+                                                        padding: '15px',
+                                                        borderRadius: '10px',
+                                                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                                                        transition: 'all 0.2s ease',
+                                                        cursor: 'default',
+                                                        border: '2px solid #4caf50'
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        e.currentTarget.style.transform = 'translateY(-3px)';
+                                                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.1)';
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.currentTarget.style.transform = 'translateY(0)';
+                                                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
+                                                    }}
+                                                >
+                                                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
+                                                        <span style={{ marginRight: '8px', fontSize: '18px' }}>{item.icon}</span>
+                                                        <Typography variant="subtitle2" style={{
+                                                            fontWeight: 'bold',
+                                                            color: darkMode ? '#90caf9' : '#1976d2',
+                                                            fontSize: '14px',
+                                                            textTransform: 'uppercase',
+                                                            letterSpacing: '0.5px'
+                                                        }}>
+                                                            {item.label}
+                                                        </Typography>
+                                                    </div>
+                                                    <Typography style={{
+                                                        marginLeft: '26px',
+                                                        fontSize: '16px',
+                                                        fontWeight: item.value === 'N/A' ? 'normal' : '500',
+                                                        opacity: item.value === 'N/A' ? 0.5 : 1
+                                                    }}>
+                                                        {item.value}
+                                                    </Typography>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </>
+                        )}
                     </DialogContent>
                 </Dialog>
             )}
