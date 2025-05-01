@@ -1,6 +1,6 @@
 # 🌍 Explore the World - Country Explorer App
 
-Welcome to **Explore the World**, a beautifully designed React app that lets you explore countries from around the globe using the REST Countries API — now with themes, filters, maps, and favorites! ✨
+Welcome to **Explore the World**, a beautifully designed React app that lets you explore countries from around the globe using the REST Countries API — now with themes, filters, maps, favorites, and **PDF export for selected countries**! ✨
 
 ---
 
@@ -16,10 +16,14 @@ Welcome to **Explore the World**, a beautifully designed React app that lets you
 - Toggle to show only your **favorite** countries
 - Favorite state is stored in **localStorage**
 
+### 📄 Document List + PDF Export (**NEW**)
+- Add countries to a **document list**
+- Click **"Download PDF"** to export the list with country details
+
 ### 🕹️ Interactive UI
 - Click a country card to view more info
 - **Modal** popup with flag, detailed info, and **Google Maps embed**
-- **Show/Hide Map** button with animated neon UI
+- **Show/Hide Map** button
 
 ### 🌗 Dark Mode
 - **Toggle** between light and dark themes
@@ -49,25 +53,22 @@ Powered by: [REST Countries API](https://restcountries.com)
 - **Google Maps Embed API**
 - **Responsive design** with custom CSS & MUI breakpoints
 - **LocalStorage** for theme and favorites persistence
+- **jsPDF** for PDF generation of selected country list
 
 ---
 
-## 🚀 Overview
-
-Countries Explorer is a responsive web application built with React that allows users to explore countries around the world. The application consumes data from the REST Countries API to provide comprehensive information about different countries, including their capitals, populations, languages, regions, and more.
-
 ## 🔗 Live Demo
 
-[🌐 View Live Demo](#)
+[![Live Site](https://img.shields.io/badge/🌐%20Explore%20the%20App-explore--the--worlds.netlify.app-brightgreen?style=for-the-badge)](https://explore-the-worlds.netlify.app/)
 
+---
 
 ## 💻 Installation
 
 Clone the repository
 ```bash
-git clone [https://github.com/your-username/countries-explorer.git](https://github.com/SE1020-IT2070-OOP-DSA-25/af-2-SiyumiSathnaraKumarasinghe)
+git clone https://github.com/SE1020-IT2070-OOP-DSA-25/af-2-SiyumiSathnaraKumarasinghe
 
-```
 
 Install dependencies
 ```bash
