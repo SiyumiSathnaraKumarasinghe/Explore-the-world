@@ -1,6 +1,7 @@
 # 🌍 Explore the World - Country Explorer App
 
-Welcome to **Explore the World**, a beautifully designed React app that lets you explore countries from around the globe using the REST Countries API — now with themes, filters, maps, favorites, and **PDF export for selected countries**! ✨
+Welcome to **Explore the World**, a beautifully designed React app that lets you explore countries from around the globe using the REST Countries API.
+Now with themes, filters, **maps**, favorites, and **PDF export for selected countries**! ✨
 
 ---
 
@@ -16,13 +17,13 @@ Welcome to **Explore the World**, a beautifully designed React app that lets you
 - Toggle to show only your **favorite** countries
 - Favorite state is stored in **localStorage**
 
-### 📄 Document List + PDF Export (**NEW**)
+### 📄 Document List + PDF Export
 - Add countries to a **document list**
 - Click **"Download PDF"** to export the list with country details
 
 ### 🕹️ Interactive UI
 - Click a country card to view more info
-- **Modal** popup with flag, detailed info, and **Google Maps embed**
+- **Modal** popup with flag, detailed info, and **Google Maps embed**🗺️
 - **Show/Hide Map** button
 
 ### 🌗 Dark Mode
@@ -67,7 +68,7 @@ Powered by: [REST Countries API](https://restcountries.com)
 
 Clone the repository
 ```bash
-git clone https://github.com/SiyumiSathnaraKumarasinghe/Explore-the-world.git
+git clone https://github.com/SE1020-IT2070-OOP-DSA-25/af-2-SiyumiSathnaraKumarasinghe.git
 
 ```
 
@@ -80,7 +81,10 @@ Start the development server
 ```bash
 npm start
 ```
-
+Run the test files
+```bash
+npm test
+```
 The application will open in your browser at http://localhost:3000
 
 ## 🛠️ Usage
@@ -88,9 +92,11 @@ The application will open in your browser at http://localhost:3000
 - **Browsing Countries**: Scroll through the country cards displayed on the main page
 - **Search**: Use the search bar at the top to find specific countries
 - **Filtering**: Use the region and language dropdowns to filter results
-- **Country Details**: Click on any country card to view detailed information
+- **Country Details**: Click on any country card to view detailed information about countries
 - **Map View**: In the country details, click the map icon to see the country's location
 - **Favorites**: Click the heart icon to add a country to favorites (requires login)
+- **Document list**: Click on the document icon to collect the details of some countries.
+- **PDF Download**: Download the detail list of countries that you have collected.
 - **Theme Switching**: Toggle between light and dark mode using the theme icon
 
 ## 🧰 Technologies Used
@@ -116,7 +122,7 @@ af-country-app/
 ├── src/
 │   ├── components/
 │   │   ├── CountryList.js
-│   │   └── ...
+│   │   └── CountryList.test.js
 │   ├── App.js
 │   ├── index.js
 │   ├── index.css
@@ -135,6 +141,12 @@ af-country-app/
 
 **Challenge 3**: Performance Optimization
 - **Solution**: Implemented lazy loading of country data and optimized API calls to reduce load times.
+
+**Challenge 4**: Dealing with API Fetch Delays in Tests
+- **Solution**: I used waitFor in the tests to wait for the country data to load before checking if it appears correctly. This ensures the test runs only after the data is fetched.
+
+**Challenge 5**: Mocking External Libraries (jsPDF)
+- **Solution**: I mocked the jsPDF library to avoid creating actual PDFs during testing. This lets us test the logic without generating files.
 
 ## 🧪 Testing
 
