@@ -60,59 +60,62 @@ const CountryList = () => {
             .catch(error => console.error("There was an error fetching country data by alpha code:", error));
 
         // Retrieve login state and favorites from localStorage on component mount
-        const storedLoginState = localStorage.getItem('isLoggedIn') === 'true'; // Convert to boolean
+        const storedLoginState = localStorage.getItem('isLoggedIn') === 'true';
         const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        const storedTheme = localStorage.getItem('darkMode') === 'true'; // Convert to boolean
+        const storedTheme = localStorage.getItem('darkMode') === 'true';
         const storedDocumentList = JSON.parse(localStorage.getItem('documentList')) || [];
+        
+        // Retrieve filter state from sessionStorage
+        const storedSearchTerm = sessionStorage.getItem('searchTerm') || '';
+        const storedSelectedRegion = sessionStorage.getItem('selectedRegion') || '';
+        const storedSelectedLanguage = sessionStorage.getItem('selectedLanguage') || '';
+        const storedShowOnlyFavorites = sessionStorage.getItem('showOnlyFavorites') === 'true';
 
         setIsLoggedIn(storedLoginState);
         setFavorites(storedFavorites);
         setDarkMode(storedTheme);
         setDocumentList(storedDocumentList);
+        setSearchTerm(storedSearchTerm);
+        setSelectedRegion(storedSelectedRegion);
+        setSelectedLanguage(storedSelectedLanguage);
+        setShowOnlyFavorites(storedShowOnlyFavorites);
     }, []);
 
     // Handle theme toggle
     const handleThemeToggle = () => {
         const newTheme = !darkMode;
         setDarkMode(newTheme);
-        localStorage.setItem('darkMode', newTheme); // Save theme preference to localStorage
+        localStorage.setItem('darkMode', newTheme);
     };
 
     // Handle login/logout toggle
     const handleLoginToggle = () => {
         const newLoginState = !isLoggedIn;
         setIsLoggedIn(newLoginState);
-        localStorage.setItem('isLoggedIn', newLoginState);  // Save login state to localStorage
-
-        // Clear any alert messages when logging in/out
+        localStorage.setItem('isLoggedIn', newLoginState);
         setAlertMessage('');
     };
 
     // Handle favorite country addition/removal
     const handleFavoriteClick = (country) => {
         if (isLoggedIn) {
-            // Check if the country is already in favorites
             const isAlreadyFavorite = favorites.some(fav => fav.name.common === country.name.common);
 
             if (isAlreadyFavorite) {
-                // Remove from favorites
                 const updatedFavorites = favorites.filter(fav => fav.name.common !== country.name.common);
                 setFavorites(updatedFavorites);
-                localStorage.setItem('favorites', JSON.stringify(updatedFavorites)); // Save updated favorites to localStorage
+                localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
                 setAlertMessage(`${country.name.common} removed from favorites`);
             } else {
-                // Add to favorites
                 const updatedFavorites = [...favorites, country];
                 setFavorites(updatedFavorites);
-                localStorage.setItem('favorites', JSON.stringify(updatedFavorites)); // Save updated favorites to localStorage
+                localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
                 setAlertMessage(`${country.name.common} added to favorites`);
             }
         } else {
-            // Use the state for alert message instead of the browser alert
             setAlertMessage("Please log in to add to favorites.");
         }
 
-        // Clear the alert message after 3 seconds
         setTimeout(() => {
             setAlertMessage('');
         }, 3000);
@@ -123,20 +126,17 @@ const CountryList = () => {
         const isInDocumentList = documentList.some(doc => doc.name.common === country.name.common);
 
         if (isInDocumentList) {
-            // Remove from document list
             const updatedDocumentList = documentList.filter(doc => doc.name.common !== country.name.common);
             setDocumentList(updatedDocumentList);
             localStorage.setItem('documentList', JSON.stringify(updatedDocumentList));
             setAlertMessage(`${country.name.common} removed from document list`);
         } else {
-            // Add to document list
             const updatedDocumentList = [...documentList, country];
             setDocumentList(updatedDocumentList);
             localStorage.setItem('documentList', JSON.stringify(updatedDocumentList));
             setAlertMessage(`${country.name.common} added to document list`);
         }
 
-        // Clear the alert message after 3 seconds
         setTimeout(() => {
             setAlertMessage('');
         }, 3000);
@@ -144,29 +144,39 @@ const CountryList = () => {
 
     // Handle favorites filter toggle
     const handleFavoritesFilterToggle = () => {
-        setShowOnlyFavorites(!showOnlyFavorites);
+        const newShowOnlyFavorites = !showOnlyFavorites;
+        setShowOnlyFavorites(newShowOnlyFavorites);
+        sessionStorage.setItem('showOnlyFavorites', newShowOnlyFavorites);
     };
 
     const handleSearchChange = (event) => {
-        setSearchTerm(event.target.value);
+        const newSearchTerm = event.target.value;
+        setSearchTerm(newSearchTerm);
+        sessionStorage.setItem('searchTerm', newSearchTerm);
     };
 
     const handleRegionChange = (event) => {
-        setSelectedRegion(event.target.value);
+        const newSelectedRegion = event.target.value;
+        setSelectedRegion(newSelectedRegion);
+        sessionStorage.setItem('selectedRegion', newSelectedRegion);
     };
 
     const handleLanguageChange = (event) => {
-        setSelectedLanguage(event.target.value);
+        const newSelectedLanguage = event.target.value;
+        setSelectedLanguage(newSelectedLanguage);
+        sessionStorage.setItem('selectedLanguage', newSelectedLanguage);
     };
 
     const handleCountryClick = (country) => {
         setSelectedCountry(country);
-        setShowMap(false); // Reset map visibility when opening a new country
+        setShowMap(false);
+        sessionStorage.setItem('selectedCountry', JSON.stringify(country));
     };
 
     const handleCloseDialog = () => {
         setSelectedCountry(null);
         setShowMap(false);
+        sessionStorage.removeItem('selectedCountry');
     };
 
     const toggleMap = () => {
@@ -186,7 +196,7 @@ const CountryList = () => {
         let yOffset = 15;
 
         doc.setFontSize(18);
-        doc.setTextColor(34, 139, 34); // ForestGreen title
+        doc.setTextColor(34, 139, 34);
         doc.setFont("helvetica", "bold");
         doc.text('Document List', 14, yOffset);
         yOffset += 12;
@@ -198,8 +208,7 @@ const CountryList = () => {
             doc.text('No countries added to document list.', 14, yOffset);
         } else {
             documentList.forEach((country, index) => {
-                // Country Title Box
-                doc.setFillColor(220, 248, 198); // Light green
+                doc.setFillColor(220, 248, 198);
                 doc.rect(10, yOffset - 3, 190, 10, 'F');
                 doc.setTextColor(0, 100, 0);
                 doc.setFontSize(14);
@@ -207,7 +216,6 @@ const CountryList = () => {
                 doc.text(country.name.common, 14, yOffset + 4);
                 yOffset += 12;
 
-                // Details
                 const details = [
                     { label: 'Capital', value: country.capital || 'N/A' },
                     { label: 'Region', value: country.region },
@@ -234,7 +242,7 @@ const CountryList = () => {
                     }
                 });
 
-                yOffset += 6; // spacing between countries
+                yOffset += 6;
                 if (yOffset > 270) {
                     doc.addPage();
                     yOffset = 15;
@@ -261,7 +269,7 @@ const CountryList = () => {
             fontFamily: 'Roboto, sans-serif',
             minHeight: '100vh',
             overflow: 'hidden',
-            transition: 'all 0.5s ease',  // Smooth transition for background & text
+            transition: 'all 0.5s ease',
             color: darkMode ? '#ffffff' : 'inherit'
         }}>
 
@@ -277,30 +285,28 @@ const CountryList = () => {
                     backgroundColor: 'transparent',
                 }}
             >
-
                 <h1 style={{
                     textAlign: 'center',
                     textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
                     fontFamily: 'Poppins, sans-serif',
-                    background: 'linear-gradient(90deg, rgba(255, 0, 0, 1), rgba(139, 0, 0, 1))',  // Bright red to dark red gradient
-                    WebkitBackgroundClip: 'text', // Gradient text
-                    color: 'transparent',  // Transparent text for gradient effect
-                    margin: '0 0 15px 0', // Add margin to bottom for spacing on mobile
-                    fontSize: window.innerWidth < 600 ? '32px' : '48px', // Responsive font size
+                    background: 'linear-gradient(90deg, rgba(255, 0, 0, 1), rgba(139, 0, 0, 1))',
+                    WebkitBackgroundClip: 'text',
+                    color: 'transparent',
+                    margin: '0 0 15px 0',
+                    fontSize: window.innerWidth < 600 ? '32px' : '48px',
                 }}>
                     Explore the World
                 </h1>
 
-                {/* Search Bar and Filters - Made responsive */}
+                {/* Search Bar and Filters */}
                 <div style={{
                     display: 'flex',
-                    flexDirection: window.innerWidth < 768 ? 'column' : 'row', // Stack vertically on mobile
+                    flexDirection: window.innerWidth < 768 ? 'column' : 'row',
                     justifyContent: 'space-between',
                     marginBottom: '20px',
-                    alignItems: window.innerWidth < 768 ? 'stretch' : 'center', // Stretch on mobile
-                    gap: '10px' // Add gap for spacing between stacked elements
+                    alignItems: window.innerWidth < 768 ? 'stretch' : 'center',
+                    gap: '10px'
                 }}>
-                    {/* Search Bar */}
                     <TextField
                         placeholder="Search by Country"
                         variant="outlined"
@@ -313,19 +319,19 @@ const CountryList = () => {
                             startAdornment: <Search style={{ color: blue[500] }} />,
                         }}
                         sx={{
-                            maxWidth: window.innerWidth < 768 ? '100%' : '300px', // Full width on mobile
+                            maxWidth: window.innerWidth < 768 ? '100%' : '300px',
                             marginBottom: '10px',
                             flex: 1,
                             backgroundColor: darkMode ? 'rgba(50, 50, 50, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-                            borderRadius: '10px', // Border radius for the search bar
+                            borderRadius: '10px',
                             '& .MuiOutlinedInput-root': {
                                 '& fieldset': {
                                     borderWidth: 2,
-                                    borderColor: blue[500], // Blue border color
-                                    borderRadius: '10px', // Matching border radius
+                                    borderColor: blue[500],
+                                    borderRadius: '10px',
                                 },
                                 '&:hover fieldset': {
-                                    borderColor: blue[700], // Darker blue on hover
+                                    borderColor: blue[700],
                                 }
                             },
                             '& .MuiInputBase-input': {
@@ -334,25 +340,23 @@ const CountryList = () => {
                         }}
                     />
 
-                    {/* Filter by Region and Language - Made responsive */}
                     <div style={{
                         display: 'flex',
-                        flexDirection: window.innerWidth < 600 ? 'column' : 'row', // Stack on very small screens
+                        flexDirection: window.innerWidth < 600 ? 'column' : 'row',
                         gap: '10px',
                         flexWrap: window.innerWidth < 768 ? 'nowrap' : 'wrap',
                         justifyContent: window.innerWidth < 768 ? 'space-between' : 'flex-end',
                         flex: window.innerWidth < 768 ? '1 1 100%' : 1,
-                        width: window.innerWidth < 768 ? '100%' : 'auto' // Full width on mobile
+                        width: window.innerWidth < 768 ? '100%' : 'auto'
                     }}>
-                        {/* Favorites Filter Toggle Button */}
                         <IconButton
                             onClick={handleFavoritesFilterToggle}
                             style={{
                                 backgroundColor: showOnlyFavorites ? 'rgba(255, 0, 0, 0.2)' : darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
-                                marginRight: window.innerWidth < 600 ? '0' : '10px', // No margin on very small screens
+                                marginRight: window.innerWidth < 600 ? '0' : '10px',
                                 width: '48px',
                                 height: '48px',
-                                alignSelf: window.innerWidth < 600 ? 'flex-start' : 'center' // Align left on very small screens
+                                alignSelf: window.innerWidth < 600 ? 'flex-start' : 'center'
                             }}
                         >
                             <Favorite style={{
@@ -360,7 +364,6 @@ const CountryList = () => {
                             }} />
                         </IconButton>
 
-                        {/* Document List Button */}
                         <IconButton
                             onClick={handleDocumentDialogOpen}
                             style={{
@@ -376,20 +379,19 @@ const CountryList = () => {
                             }} />
                         </IconButton>
 
-                        {/* Filter by Region */}
                         <FormControl
                             size="medium"
                             style={{
-                                minWidth: window.innerWidth < 600 ? '100%' : '200px', // Full width on very small screens
+                                minWidth: window.innerWidth < 600 ? '100%' : '200px',
                                 flex: window.innerWidth < 600 ? '1 1 100%' : 'initial'
                             }}
                             sx={{
                                 '& .MuiOutlinedInput-root': {
-                                    borderRadius: '15px', // ✅ always apply outer border radius
+                                    borderRadius: '15px',
                                     backgroundColor: darkMode ? 'rgba(50, 50, 50, 0.8)' : 'transparent',
                                     '& fieldset': {
                                         borderWidth: 2,
-                                        borderRadius: '15px' // ✅ apply to inner outline as well
+                                        borderRadius: '15px'
                                     }
                                 },
                                 '& .MuiInputBase-input': {
@@ -415,16 +417,15 @@ const CountryList = () => {
                             </Select>
                         </FormControl>
 
-                        {/* Filter by Language */}
                         <FormControl
                             size="medium"
                             style={{
-                                minWidth: window.innerWidth < 600 ? '100%' : '200px', // Full width on very small screens 
+                                minWidth: window.innerWidth < 600 ? '100%' : '200px',
                                 flex: window.innerWidth < 600 ? '1 1 100%' : 'initial'
                             }}
                             sx={{
                                 '& .MuiOutlinedInput-root': {
-                                    borderRadius: '15px', // ✅ consistent styling
+                                    borderRadius: '15px',
                                     backgroundColor: darkMode ? 'rgba(50, 50, 50, 0.8)' : 'transparent',
                                     '& fieldset': {
                                         borderWidth: 2,
@@ -452,21 +453,19 @@ const CountryList = () => {
                             </Select>
                         </FormControl>
                     </div>
-
                 </div>
             </div>
 
-            {/* Login Button and Dark Mode Toggle at Top-Right Corner - Made responsive */}
+            {/* Login Button and Dark Mode Toggle */}
             <div style={{
                 position: 'absolute',
-                top: window.innerWidth < 600 ? '70px' : '20px', // Position lower on mobile
+                top: window.innerWidth < 600 ? '70px' : '20px',
                 right: '20px',
                 zIndex: 1000,
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px'
             }}>
-                {/* Dark Mode Toggle Button */}
                 <IconButton
                     onClick={handleThemeToggle}
                     style={{
@@ -480,14 +479,13 @@ const CountryList = () => {
                     }
                 </IconButton>
 
-                {/* Login Button - Keeping Original Style */}
                 <Button
                     onClick={handleLoginToggle}
                     variant="contained"
                     style={{
-                        borderRadius: '15px', // Adding border radius
-                        backgroundColor: green[500], // Green color
-                        fontSize: '16px', // Larger button
+                        borderRadius: '15px',
+                        backgroundColor: green[500],
+                        fontSize: '16px',
                         padding: '10px 20px',
                     }}
                 >
@@ -495,8 +493,7 @@ const CountryList = () => {
                 </Button>
             </div>
 
-
-            {/* Scrolling Content Section - Adjust top margin based on screen size */}
+            {/* Scrolling Content Section */}
             <div
                 className="scroll-container"
                 style={{
@@ -508,8 +505,6 @@ const CountryList = () => {
                     paddingRight: '10px',
                 }}
             >
-
-                {/* Displaying Country Cards */}
                 <Grid container spacing={2} justifyContent="center">
                     {filteredCountries.map(country => (
                         <Grid item xs={12} sm={6} md={2.4} lg={2.4} key={country.name.common}>
@@ -531,7 +526,6 @@ const CountryList = () => {
                                 }}
                             >
                                 <CardContent>
-                                    {/* Country Name (Centered and Bold) */}
                                     <Typography
                                         variant="h6"
                                         sx={{
@@ -544,8 +538,6 @@ const CountryList = () => {
                                     >
                                         {country.name.common}
                                     </Typography>
-
-                                    {/* Content (Left aligned) */}
                                     <Typography sx={{ textAlign: 'left', mt: 1, color: darkMode ? '#ffffff' : 'inherit' }}>
                                         Capital: {country.capital}
                                     </Typography>
@@ -555,8 +547,6 @@ const CountryList = () => {
                                     <Typography sx={{ textAlign: 'left', color: darkMode ? '#ffffff' : 'inherit' }}>
                                         Population: {country.population.toLocaleString()}
                                     </Typography>
-
-                                    {/* Flag Image */}
                                     <Box
                                         sx={{
                                             mt: 2,
@@ -571,8 +561,6 @@ const CountryList = () => {
                                             width="100"
                                         />
                                     </Box>
-
-                                    {/* Favorite and Document Buttons */}
                                     <Box
                                         sx={{
                                             display: 'flex',
@@ -654,23 +642,23 @@ const CountryList = () => {
                             letterSpacing: '1px',
                         }}
                     >
-                        <span style={{
-                            position: 'absolute',
-                            right: '15px',
-                            top: '15px',
-                            cursor: 'pointer',
-                            fontSize: '24px',
-                            opacity: '0.8',
-                            transition: 'opacity 0.2s',
-                            ':hover': { opacity: '1' }
-                        }}
+                        <Typography
+                            sx={{
+                                position: 'absolute',
+                                right: '15px',
+                                top: '15px',
+                                cursor: 'pointer',
+                                fontSize: '24px',
+                                opacity: '0.8',
+                                transition: 'opacity 0.2s',
+                                '&:hover': { opacity: '1' }
+                            }}
                             onClick={handleCloseDialog}
                         >
                             ×
-                        </span>
+                        </Typography>
                         🌍 {selectedCountry.name.common} 🌍
                     </DialogTitle>
-
                     <DialogContent
                         style={{
                             backgroundColor: darkMode ? '#696464' : '#fff8ef',
@@ -684,7 +672,6 @@ const CountryList = () => {
                             color: darkMode ? '#ffffff' : 'inherit',
                         }}
                     >
-
                         <div
                             style={{
                                 display: 'flex',
@@ -692,7 +679,6 @@ const CountryList = () => {
                                 width: '100%',
                             }}
                         >
-                            {/* Left Column - Flag and Toggle Map Button */}
                             <div style={{
                                 flex: showMap ? '1' : '0.4',
                                 padding: '25px',
@@ -705,7 +691,6 @@ const CountryList = () => {
                                 position: 'relative',
                                 gap: showMap ? '12px' : '0'
                             }}>
-                                {/* Flag Container (hidden when map is shown) */}
                                 {!showMap && (
                                     <div
                                         style={{
@@ -734,8 +719,6 @@ const CountryList = () => {
                                         />
                                     </div>
                                 )}
-
-                                {/* Map Toggle Button + Label Wrapper */}
                                 <div style={{
                                     display: 'flex',
                                     flexDirection: showMap ? 'row' : 'column',
@@ -769,7 +752,6 @@ const CountryList = () => {
                                             fontSize: '30px'
                                         }} />
                                     </IconButton>
-
                                     <Typography
                                         variant="subtitle1"
                                         style={{
@@ -783,8 +765,6 @@ const CountryList = () => {
                                     </Typography>
                                 </div>
                             </div>
-
-                            {/* Right Column - Country Info or Map */}
                             <div style={{
                                 flex: showMap ? '1' : '0.6',
                                 padding: '25px',
@@ -803,7 +783,6 @@ const CountryList = () => {
                                         ></iframe>
                                     </div>
                                 ) : (
-                                    // Info Grid
                                     <div style={{
                                         display: 'grid',
                                         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -822,7 +801,7 @@ const CountryList = () => {
                                             <div
                                                 key={index}
                                                 style={{
-                                                    backgroundColor: darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,165,0,0.3)', // Light orange for light mode
+                                                    backgroundColor: darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,165,0,0.3)',
                                                     padding: '15px',
                                                     borderRadius: '10px',
                                                     boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
@@ -901,20 +880,21 @@ const CountryList = () => {
                             letterSpacing: '1px',
                         }}
                     >
-                        <span style={{
-                            position: 'absolute',
-                            right: '15px',
-                            top: '15px',
-                            cursor: 'pointer',
-                            fontSize: '24px',
-                            opacity: '0.8',
-                            transition: 'opacity 0.2s',
-                            ':hover': { opacity: '1' }
-                        }}
+                        <Typography
+                            sx={{
+                                position: 'absolute',
+                                right: '15px',
+                                top: '15px',
+                                cursor: 'pointer',
+                                fontSize: '24px',
+                                opacity: '0.8',
+                                transition: 'opacity 0.2s',
+                                '&:hover': { opacity: '1' }
+                            }}
                             onClick={handleDocumentDialogClose}
                         >
                             ×
-                        </span>
+                        </Typography>
                         📋 Document List
                     </DialogTitle>
                     <DialogContent
