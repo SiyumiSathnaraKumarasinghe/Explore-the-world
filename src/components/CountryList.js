@@ -410,6 +410,7 @@ const CountryList = () => {
                                 size="medium"
                                 style={{
                                     minWidth: window.innerWidth < 600 ? '100%' : '180px',
+                                    height: window.innerWidth < 600 ? '56px' : undefined,
                                 }}
                                 sx={{
                                     borderRadius: '16px', // Match filter bar border radius
@@ -457,6 +458,7 @@ const CountryList = () => {
                                 size="medium"
                                 style={{
                                     minWidth: window.innerWidth < 600 ? '100%' : '180px',
+                                    height: window.innerWidth < 600 ? '56px' : undefined,
                                 }}
                                 sx={{
                                     borderRadius: '16px', // Match filter bar border radius
