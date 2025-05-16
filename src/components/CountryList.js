@@ -305,7 +305,7 @@ const CountryList = () => {
                     justifyContent: 'space-between',
                     marginBottom: '20px',
                     alignItems: 'center',
-                    gap: '15px'
+                    gap: window.innerWidth < 768 ? '15px' : '0'
                 }}>
                     <TextField
                         placeholder="Search by Country"
@@ -347,7 +347,8 @@ const CountryList = () => {
                         flexWrap: 'wrap',
                         justifyContent: window.innerWidth < 768 ? 'center' : 'flex-end',
                         alignItems: 'center',
-                        width: window.innerWidth < 768 ? '100%' : 'auto'
+                        width: window.innerWidth < 768 ? '100%' : 'auto',
+                        marginTop: window.innerWidth < 768 ? '15px' : '0'
                     }}>
                         <div style={{
                             display: 'flex',
@@ -402,9 +403,11 @@ const CountryList = () => {
 
                         <div style={{
                             display: 'flex',
+                            flexDirection: window.innerWidth < 768 ? 'column' : 'row',
                             gap: '15px',
                             flexWrap: 'wrap',
                             justifyContent: window.innerWidth < 768 ? 'center' : 'flex-end',
+                            width: window.innerWidth < 768 ? '100%' : 'auto'
                         }}>
                             <FormControl
                                 size="medium"
@@ -526,6 +529,7 @@ const CountryList = () => {
                             borderRadius: '16px',
                             padding: '10px',
                             boxShadow: '0 3px 6px rgba(0,0,0,0.2)',
+                            marginTop: window.innerWidth < 768 ? '15px' : '0'
                         }}>
                             <IconButton
                                 onClick={handleThemeToggle}
