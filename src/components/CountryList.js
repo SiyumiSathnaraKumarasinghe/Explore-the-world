@@ -41,11 +41,9 @@ const CountryList = () => {
 
     // Fetch countries data from multiple endpoints of the REST Countries API
     useEffect(() => {
-        // Fetch all countries
         axios.get('https://restcountries.com/v3.1/all')
             .then(response => {
                 setCountries(response.data);
-                // Collecting unique languages from all countries
                 const languageSet = new Set();
                 response.data.forEach(country => {
                     if (country.languages) {
@@ -56,34 +54,22 @@ const CountryList = () => {
             })
             .catch(error => console.error("There was an error fetching the countries data:", error));
 
-        // Fetch country by name example (e.g., "USA")
         axios.get('https://restcountries.com/v3.1/name/USA')
-            .then(response => {
-                console.log('Country by name (USA):', response.data);
-            })
+            .then(response => console.log('Country by name (USA):', response.data))
             .catch(error => console.error("There was an error fetching country data by name:", error));
 
-        // Fetch countries from a specific region (e.g., Europe)
         axios.get('https://restcountries.com/v3.1/region/europe')
-            .then(response => {
-                console.log('Countries in Europe:', response.data);
-            })
+            .then(response => console.log('Countries in Europe:', response.data))
             .catch(error => console.error("There was an error fetching countries by region:", error));
 
-        // Fetch country by alpha code (e.g., 'US' for the United States)
         axios.get('https://restcountries.com/v3.1/alpha/US')
-            .then(response => {
-                console.log('Country by alpha code (US):', response.data);
-            })
+            .then(response => console.log('Country by alpha code (US):', response.data))
             .catch(error => console.error("There was an error fetching country data by alpha code:", error));
 
-        // Retrieve login state and favorites from localStorage on component mount
         const storedLoginState = localStorage.getItem('isLoggedIn') === 'true';
         const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
         const storedTheme = localStorage.getItem('darkMode') === 'true';
         const storedDocumentList = JSON.parse(localStorage.getItem('documentList')) || [];
-        
-        // Retrieve filter state from sessionStorage
         const storedSearchTerm = sessionStorage.getItem('searchTerm') || '';
         const storedSelectedRegion = sessionStorage.getItem('selectedRegion') || '';
         const storedSelectedLanguage = sessionStorage.getItem('selectedLanguage') || '';
@@ -98,25 +84,21 @@ const CountryList = () => {
         setSelectedLanguage(storedSelectedLanguage);
         setShowOnlyFavorites(storedShowOnlyFavorites);
 
-        // Initial header height calculation
         updateHeaderHeight();
     }, []);
 
-    // Add resize event listener
     useEffect(() => {
         const debouncedUpdateHeaderHeight = debounce(updateHeaderHeight, 200);
         window.addEventListener('resize', debouncedUpdateHeaderHeight);
         return () => window.removeEventListener('resize', debouncedUpdateHeaderHeight);
     }, []);
 
-    // Handle theme toggle
     const handleThemeToggle = () => {
         const newTheme = !darkMode;
         setDarkMode(newTheme);
         localStorage.setItem('darkMode', newTheme);
     };
 
-    // Handle login/logout toggle
     const handleLoginToggle = () => {
         const newLoginState = !isLoggedIn;
         setIsLoggedIn(newLoginState);
@@ -124,11 +106,9 @@ const CountryList = () => {
         setAlertMessage('');
     };
 
-    // Handle favorite country addition/removal
     const handleFavoriteClick = (country) => {
         if (isLoggedIn) {
             const isAlreadyFavorite = favorites.some(fav => fav.name.common === country.name.common);
-
             if (isAlreadyFavorite) {
                 const updatedFavorites = favorites.filter(fav => fav.name.common !== country.name.common);
                 setFavorites(updatedFavorites);
@@ -143,16 +123,11 @@ const CountryList = () => {
         } else {
             setAlertMessage("Please log in to add to favorites.");
         }
-
-        setTimeout(() => {
-            setAlertMessage('');
-        }, 3000);
+        setTimeout(() => setAlertMessage(''), 3000);
     };
 
-    // Handle document list addition/removal
     const handleDocumentClick = (country) => {
         const isInDocumentList = documentList.some(doc => doc.name.common === country.name.common);
-
         if (isInDocumentList) {
             const updatedDocumentList = documentList.filter(doc => doc.name.common !== country.name.common);
             setDocumentList(updatedDocumentList);
@@ -164,13 +139,9 @@ const CountryList = () => {
             localStorage.setItem('documentList', JSON.stringify(updatedDocumentList));
             setAlertMessage(`${country.name.common} added to document list`);
         }
-
-        setTimeout(() => {
-            setAlertMessage('');
-        }, 3000);
+        setTimeout(() => setAlertMessage(''), 3000);
     };
 
-    // Handle favorites filter toggle
     const handleFavoritesFilterToggle = () => {
         const newShowOnlyFavorites = !showOnlyFavorites;
         setShowOnlyFavorites(newShowOnlyFavorites);
@@ -291,13 +262,13 @@ const CountryList = () => {
     return (
         <div style={{
             backgroundImage: `url(${darkMode ? '/images/darkBackground.png' : '/images/background.jpg'})`,
-            backgroundColor: darkMode ? '#121212' : 'inherit',
+            backgroundColor: darkMode ? 'linear-gradient(to bottom, #1e1e1e, #121212)' : 'linear-gradient(to bottom, #e3f2fd, #bbdefb)',
             backgroundSize: 'cover',
             backgroundAttachment: 'fixed',
             fontFamily: 'Roboto, sans-serif',
             minHeight: '100vh',
             overflow: 'hidden',
-            transition: 'all 0.5s ease',
+            transition: 'all 0.5s ease-in-out',
             color: darkMode ? '#ffffff' : 'inherit'
         }}>
             {/* Fixed Title and Filters */}
@@ -310,14 +281,15 @@ const CountryList = () => {
                     right: 0,
                     zIndex: 1000,
                     padding: '20px',
-                    backgroundColor: 'transparent',
+                    backgroundColor: darkMode ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(2px)',
                 }}
             >
                 <h1 style={{
                     textAlign: 'center',
                     textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
                     fontFamily: 'Poppins, sans-serif',
-                    background: 'linear-gradient(90deg, rgba(255, 0, 0, 1), rgba(139, 0, 0, 1))',
+                    background: 'linear-gradient(90deg, #ff1744, #b71c1c)',
                     WebkitBackgroundClip: 'text',
                     color: 'transparent',
                     margin: '0 0 15px 0',
@@ -332,8 +304,8 @@ const CountryList = () => {
                     flexDirection: window.innerWidth < 768 ? 'column' : 'row',
                     justifyContent: 'space-between',
                     marginBottom: '20px',
-                    alignItems: window.innerWidth < 768 ? 'stretch' : 'center',
-                    gap: '10px'
+                    alignItems: 'center',
+                    gap: '15px'
                 }}>
                     <TextField
                         placeholder="Search by Country"
@@ -341,22 +313,21 @@ const CountryList = () => {
                         value={searchTerm}
                         onChange={handleSearchChange}
                         fullWidth
-                        margin="normal"
                         size="medium"
                         InputProps={{
                             startAdornment: <Search style={{ color: blue[500] }} />,
                         }}
                         sx={{
-                            maxWidth: window.innerWidth < 768 ? '100%' : '300px',
-                            marginBottom: '10px',
-                            flex: 1,
-                            backgroundColor: darkMode ? 'rgba(50, 50, 50, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-                            borderRadius: '10px',
+                            maxWidth: window.innerWidth < 768 ? '100%' : '400px',
+                            background: darkMode
+                                ? 'linear-gradient(135deg, rgba(50, 50, 50, 0.9), rgba(30, 30, 30, 0.9))'
+                                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9))',
+                            borderRadius: '16px',
                             '& .MuiOutlinedInput-root': {
                                 '& fieldset': {
                                     borderWidth: 2,
-                                    borderColor: blue[500],
-                                    borderRadius: '10px',
+                                    borderColor: 'rgba(33, 150, 243, 0.5)',
+                                    borderRadius: '16px',
                                 },
                                 '&:hover fieldset': {
                                     borderColor: blue[700],
@@ -364,158 +335,226 @@ const CountryList = () => {
                             },
                             '& .MuiInputBase-input': {
                                 color: darkMode ? '#ffffff' : 'inherit',
+                                padding: '12px',
                             },
                         }}
                     />
 
                     <div style={{
                         display: 'flex',
-                        flexDirection: window.innerWidth < 768 ? 'row' : 'row',
-                        gap: '10px',
-                        flexWrap: window.innerWidth < 768 ? 'nowrap' : 'wrap',
-                        justifyContent: window.innerWidth < 768 ? 'space-between' : 'flex-end',
-                        flex: window.innerWidth < 768 ? '1 1 100%' : 1,
+                        flexDirection: window.innerWidth < 768 ? 'column' : 'row',
+                        gap: '15px',
+                        flexWrap: 'wrap',
+                        justifyContent: window.innerWidth < 768 ? 'center' : 'flex-end',
+                        alignItems: 'center',
                         width: window.innerWidth < 768 ? '100%' : 'auto'
                     }}>
-                        <IconButton
-                            onClick={handleFavoritesFilterToggle}
-                            style={{
-                                backgroundColor: showOnlyFavorites ? 'rgba(255, 0, 0, 0.2)' : darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
-                                marginRight: window.innerWidth < 600 ? '0' : '10px',
-                                width: '48px',
-                                height: '48px',
-                                alignSelf: 'center'
-                            }}
-                        >
-                            <Favorite style={{
-                                color: showOnlyFavorites ? red[500] : darkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'
-                            }} />
-                        </IconButton>
-
-                        <IconButton
-                            onClick={handleDocumentDialogOpen}
-                            style={{
-                                backgroundColor: documentList.length > 0 ? 'rgba(0, 128, 0, 0.2)' : darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
-                                marginRight: window.innerWidth < 600 ? '0' : '10px',
-                                width: '48px',
-                                height: '48px',
-                                alignSelf: 'center'
-                            }}
-                        >
-                            <Description style={{
-                                color: documentList.length > 0 ? green[500] : darkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'
-                            }} />
-                        </IconButton>
-
-                        <FormControl
-                            size="medium"
-                            style={{
-                                minWidth: window.innerWidth < 600 ? '100%' : '200px',
-                                flex: window.innerWidth < 600 ? '1 1 100%' : 'initial'
-                            }}
-                            sx={{
-                                '& .MuiOutlinedInput-root': {
-                                    borderRadius: '15px',
-                                    backgroundColor: darkMode ? 'rgba(50, 50, 50, 0.8)' : 'transparent',
-                                    '& fieldset': {
-                                        borderWidth: 2,
-                                        borderRadius: '15px'
+                        <div style={{
+                            display: 'flex',
+                            gap: '10px',
+                            background: darkMode
+                                ? 'linear-gradient(135deg, rgba(80, 80, 80, 0.3), rgba(40, 40, 40, 0.3))'
+                                : 'linear-gradient(135deg, rgba(200, 200, 200, 0.2), rgba(150, 150, 150, 0.2))',
+                            borderRadius: '16px',
+                            padding: '10px',
+                            boxShadow: '0 3px 6px rgba(0,0,0,0.2)',
+                        }}>
+                            <IconButton
+                                onClick={handleFavoritesFilterToggle}
+                                style={{
+                                    backgroundColor: showOnlyFavorites ? 'rgba(255, 0, 0, 0.4)' : 'transparent',
+                                    width: '40px',
+                                    height: '40px',
+                                    transition: 'all 0.3s ease-in-out',
+                                }}
+                                sx={{
+                                    '&:hover': {
+                                        backgroundColor: showOnlyFavorites ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.15)',
                                     }
-                                },
-                                '& .MuiInputBase-input': {
-                                    color: darkMode ? '#ffffff' : 'inherit',
-                                },
-                                '& .MuiInputLabel-root': {
-                                    color: darkMode ? 'rgba(255, 255, 255, 0.7)' : 'inherit',
-                                }
-                            }}
-                        >
-                            <InputLabel>Filter by Region</InputLabel>
-                            <Select
-                                value={selectedRegion}
-                                onChange={handleRegionChange}
-                                label="Filter by Region"
+                                }}
                             >
-                                <MenuItem value="">All Regions</MenuItem>
-                                <MenuItem value="Africa">Africa</MenuItem>
-                                <MenuItem value="Asia">Asia</MenuItem>
-                                <MenuItem value="Europe">Europe</MenuItem>
-                                <MenuItem value="Oceania">Oceania</MenuItem>
-                                <MenuItem value="Americas">Americas</MenuItem>
-                            </Select>
-                        </FormControl>
+                                <Favorite style={{
+                                    color: showOnlyFavorites ? red[500] : darkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
+                                    fontSize: '24px'
+                                }} />
+                            </IconButton>
 
-                        <FormControl
-                            size="medium"
-                            style={{
-                                minWidth: window.innerWidth < 600 ? '100%' : '200px',
-                                flex: window.innerWidth < 600 ? '1 1 100%' : 'initial'
-                            }}
-                            sx={{
-                                '& .MuiOutlinedInput-root': {
-                                    borderRadius: '15px',
-                                    backgroundColor: darkMode ? 'rgba(50, 50, 50, 0.8)' : 'transparent',
-                                    '& fieldset': {
-                                        borderWidth: 2,
-                                        borderRadius: '15px'
+                            <IconButton
+                                onClick={handleDocumentDialogOpen}
+                                style={{
+                                    backgroundColor: documentList.length > 0 ? 'rgba(0, 128, 0, 0.4)' : 'transparent',
+                                    width: '40px',
+                                    height: '40px',
+                                    transition: 'all 0.3s ease-in-out',
+                                }}
+                                sx={{
+                                    '&:hover': {
+                                        backgroundColor: documentList.length > 0 ? 'rgba(0, 128, 0, 0.5)' : 'rgba(0, 0, 0, 0.15)',
                                     }
-                                },
-                                '& .MuiInputBase-input': {
-                                    color: darkMode ? '#ffffff' : 'inherit',
-                                },
-                                '& .MuiInputLabel-root': {
-                                    color: darkMode ? 'rgba(255, 255, 255, 0.7)' : 'inherit',
-                                }
-                            }}
-                        >
-                            <InputLabel>Filter by Language</InputLabel>
-                            <Select
-                                value={selectedLanguage}
-                                onChange={handleLanguageChange}
-                                label="Filter by Language"
+                                }}
                             >
-                                <MenuItem value="">All Languages</MenuItem>
-                                {languages.map(language => (
-                                    <MenuItem key={language} value={language}>{language}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </div>
+                                <Description style={{
+                                    color: documentList.length > 0 ? green[500] : darkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
+                                    fontSize: '24px'
+                                }} />
+                            </IconButton>
+                        </div>
 
-                    {/* Login Button and Dark Mode Toggle */}
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                        marginTop: '10px',
-                        justifyContent: window.innerWidth < 768 ? 'flex-end' : 'flex-start'
-                    }}>
-                        <IconButton
-                            onClick={handleThemeToggle}
-                            style={{
-                                backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
-                                marginRight: '10px',
-                            }}
-                        >
-                            {darkMode ?
-                                <Brightness7 style={{ color: '#FFD700' }} /> :
-                                <Brightness4 style={{ color: '#FFFFFF' }} />
-                            }
-                        </IconButton>
+                        <div style={{
+                            display: 'flex',
+                            gap: '15px',
+                            flexWrap: 'wrap',
+                            justifyContent: window.innerWidth < 768 ? 'center' : 'flex-end',
+                        }}>
+                            <FormControl
+                                size="medium"
+                                style={{
+                                    minWidth: window.innerWidth < 600 ? '100%' : '180px',
+                                }}
+                                sx={{
+                                    borderRadius: '16px', // Match filter bar border radius
+                                    boxShadow: '0 0 8px 2px rgba(33, 150, 243, 0.5)', // Blue glow effect
+                                    '& .MuiOutlinedInput-root': {
+                                        borderRadius: '16px',
+                                        background: darkMode
+                                            ? 'linear-gradient(135deg, rgba(50, 50, 50, 0.9), rgba(30, 30, 30, 0.9))'
+                                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9))',
+                                        '& fieldset': {
+                                            borderWidth: 2,
+                                            borderColor: darkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)',
+                                            borderRadius: '16px'
+                                        },
+                                        '&:hover fieldset': {
+                                            borderColor: darkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)',
+                                        }
+                                    },
+                                    '& .MuiInputBase-input': {
+                                        color: darkMode ? '#ffffff' : 'inherit',
+                                        padding: '12px',
+                                    },
+                                    '& .MuiInputLabel-root': {
+                                        color: darkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
+                                        fontSize: '14px',
+                                    }
+                                }}
+                            >
+                                <InputLabel>Filter by Region</InputLabel>
+                                <Select
+                                    value={selectedRegion}
+                                    onChange={handleRegionChange}
+                                    label="Filter by Region"
+                                >
+                                    <MenuItem value="">All Regions</MenuItem>
+                                    <MenuItem value="Africa">Africa</MenuItem>
+                                    <MenuItem value="Asia">Asia</MenuItem>
+                                    <MenuItem value="Europe">Europe</MenuItem>
+                                    <MenuItem value="Oceania">Oceania</MenuItem>
+                                    <MenuItem value="Americas">Americas</MenuItem>
+                                </Select>
+                            </FormControl>
 
-                        <Button
-                            onClick={handleLoginToggle}
-                            variant="contained"
-                            style={{
-                                borderRadius: '15px',
-                                backgroundColor: green[500],
-                                fontSize: '16px',
-                                padding: '10px 20px',
-                                marginLeft: 'auto'
-                            }}
-                        >
-                            {isLoggedIn ? 'Logout' : 'Login'}
-                        </Button>
+                            <FormControl
+                                size="medium"
+                                style={{
+                                    minWidth: window.innerWidth < 600 ? '100%' : '180px',
+                                }}
+                                sx={{
+                                    borderRadius: '16px', // Match filter bar border radius
+                                    boxShadow: '0 0 8px 2px rgba(33, 150, 243, 0.5)', // Blue glow effect
+                                    '& .MuiOutlinedInput-root': {
+                                        borderRadius: '16px',
+                                        background: darkMode
+                                            ? 'linear-gradient(135deg, rgba(50, 50, 50, 0.9), rgba(30, 30, 30, 0.9))'
+                                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9))',
+                                        '& fieldset': {
+                                            borderWidth: 2,
+                                            borderColor: darkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)',
+                                            borderRadius: '16px'
+                                        },
+                                        '&:hover fieldset': {
+                                            borderColor: darkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)',
+                                        }
+                                    },
+                                    '& .MuiInputBase-input': {
+                                        color: darkMode ? '#ffffff' : 'inherit',
+                                        padding: '12px',
+                                    },
+                                    '& .MuiInputLabel-root': {
+                                        color: darkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
+                                        fontSize: '14px',
+                                    }
+                                }}
+                            >
+                                <InputLabel>Filter by Language</InputLabel>
+                                <Select
+                                    value={selectedLanguage}
+                                    onChange={handleLanguageChange}
+                                    label="Filter by Language"
+                                >
+                                    <MenuItem value="">All Languages</MenuItem>
+                                    {languages.map(language => (
+                                        <MenuItem key={language} value={language}>{language}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </div>
+
+                        <div style={{
+                            display: 'flex',
+                            gap: '10px',
+                            background: darkMode
+                                ? 'linear-gradient(135deg, rgba(80, 80, 80, 0.3), rgba(40, 40, 40, 0.3))'
+                                : 'linear-gradient(135deg, rgba(200, 200, 200, 0.2), rgba(150, 150, 150, 0.2))',
+                            borderRadius: '16px',
+                            padding: '10px',
+                            boxShadow: '0 3px 6px rgba(0,0,0,0.2)',
+                        }}>
+                            <IconButton
+                                onClick={handleThemeToggle}
+                                style={{
+                                    backgroundColor: 'transparent',
+                                    width: '40px',
+                                    height: '40px',
+                                    transition: 'all 0.3s ease-in-out',
+                                }}
+                                sx={{
+                                    '&:hover': {
+                                        backgroundColor: 'rgba(0, 0, 0, 0.15)',
+                                    }
+                                }}
+                            >
+                                {darkMode ?
+                                    <Brightness7 style={{ color: '#FFD700', fontSize: '24px' }} /> :
+                                    <Brightness4 style={{ color: '#2196f3', fontSize: '24px' }} />
+                                }
+                            </IconButton>
+
+                            <Button
+                                onClick={handleLoginToggle}
+                                variant="contained"
+                                style={{
+                                    borderRadius: '16px',
+                                    background: darkMode
+                                        ? 'linear-gradient(45deg, #388e3c, #4caf50)'
+                                        : 'linear-gradient(45deg, #4caf50, #66bb6a)',
+                                    fontSize: '14px',
+                                    padding: '8px 20px',
+                                    textTransform: 'none',
+                                    fontWeight: 500,
+                                    boxShadow: '0 3px 6px rgba(0,0,0,0.2)',
+                                    transition: 'all 0.3s ease-in-out',
+                                }}
+                                sx={{
+                                    '&:hover': {
+                                        background: darkMode
+                                            ? 'linear-gradient(45deg, #2e7d32, #388e3c)'
+                                            : 'linear-gradient(45deg, #388e3c, #4caf50)',
+                                    }
+                                }}
+                            >
+                                {isLoggedIn ? 'Logout' : 'Login'}
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -539,16 +578,19 @@ const CountryList = () => {
                                 onClick={() => handleCountryClick(country)}
                                 sx={{
                                     minHeight: '310px',
-                                    borderRadius: '8px',
+                                    borderRadius: '12px',
                                     p: 2,
                                     textAlign: 'left',
-                                    backgroundColor: darkMode ? 'rgba(30, 30, 30, 0.7)' : 'rgba(255, 255, 255, 0.7)',
+                                    background: darkMode
+                                        ? 'linear-gradient(145deg, rgba(50, 50, 50, 0.7), rgba(30, 30, 30, 0.7))'
+                                        : 'linear-gradient(145deg, rgba(255, 255, 255, 0.8), rgba(240, 240, 240, 0.8))',
                                     color: darkMode ? '#ffffff' : 'inherit',
-                                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                                    transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
                                     cursor: 'pointer',
+                                    border: darkMode ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)',
                                     '&:hover': {
                                         transform: 'scale(1.05)',
-                                        boxShadow: '0 8px 20px rgba(0,0,0,0.2)',
+                                        boxShadow: '0 8px 20px rgba(0,0,0,0.25)',
                                     },
                                 }}
                             >
@@ -605,11 +647,9 @@ const CountryList = () => {
                                         >
                                             <Favorite
                                                 sx={{
-                                                    color: favorites.some(
-                                                        fav => fav.name.common === country.name.common
-                                                    )
+                                                    color: favorites.some(fav => fav.name.common === country.name.common)
                                                         ? red[500]
-                                                        : darkMode ? 'rgba(255, 255, 255, 0.5)' : 'gray',
+                                                        : darkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
                                                 }}
                                             />
                                         </IconButton>
@@ -621,11 +661,9 @@ const CountryList = () => {
                                         >
                                             <Description
                                                 sx={{
-                                                    color: documentList.some(
-                                                        doc => doc.name.common === country.name.common
-                                                    )
+                                                    color: documentList.some(doc => doc.name.common === country.name.common)
                                                         ? green[500]
-                                                        : darkMode ? 'rgba(255, 255, 255, 0.5)' : 'gray',
+                                                        : darkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
                                                 }}
                                             />
                                         </IconButton>
@@ -658,10 +696,10 @@ const CountryList = () => {
                             fontWeight: 'bold',
                             fontSize: '30px',
                             textAlign: 'center',
-                            background: 'linear-gradient(to right, #ff7e5f, #feb47b)',
+                            background: 'linear-gradient(to right, #ff6e40, #ffab91)',
                             color: 'black',
                             padding: '25px 0',
-                            border: '2px solid #FFA500',
+                            border: '2px solid #ff5722',
                             position: 'relative',
                             borderBottom: '1px solid rgba(255,255,255,0.2)',
                             textShadow: '0px 2px 4px rgba(0,0,0,0.2)',
@@ -688,11 +726,13 @@ const CountryList = () => {
                     </DialogTitle>
                     <DialogContent
                         style={{
-                            backgroundColor: darkMode ? '#696464' : '#fff8ef',
+                            background: darkMode
+                                ? 'linear-gradient(to bottom, #696464, #424242)'
+                                : 'linear-gradient(to bottom, #fff8ef, #f5f5f5)',
                             padding: '25px',
                             display: 'flex',
                             flexDirection: 'column',
-                            border: '2px solid #FFA500',
+                            border: '2px solid #ff5722',
                             gap: '15px',
                             fontSize: '16px',
                             transition: 'all 0.3s ease-in-out',
@@ -714,7 +754,9 @@ const CountryList = () => {
                                 alignItems: showMap ? 'center' : 'center',
                                 justifyContent: showMap ? 'flex-start' : 'center',
                                 borderRight: showMap ? 'none' : `1px solid ${darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
-                                backgroundColor: darkMode ? '#252525' : '#f5f5f5',
+                                background: darkMode
+                                    ? 'linear-gradient(145deg, rgba(50, 50, 50, 0.7), rgba(30, 30, 30, 0.7))'
+                                    : 'linear-gradient(145deg, rgba(245, 245, 245, 0.8), rgba(230, 230, 230, 0.8))',
                                 position: 'relative',
                                 gap: showMap ? '12px' : '0'
                             }}>
@@ -724,14 +766,16 @@ const CountryList = () => {
                                             boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.2)',
                                             borderRadius: '12px',
                                             padding: '10px',
-                                            backgroundColor: darkMode ? '#3d3d3d' : '#ffffff',
+                                            background: darkMode
+                                                ? 'linear-gradient(145deg, rgba(80, 80, 80, 0.8), rgba(50, 50, 50, 0.8))'
+                                                : 'linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9))',
                                             marginTop: '40px',
                                             marginBottom: '25px',
                                             width: '100%',
                                             maxWidth: '250px',
                                             display: 'flex',
                                             justifyContent: 'center',
-                                            transition: 'all 0.3s ease',
+                                            transition: 'all 0.3s ease-in-out',
                                         }}
                                     >
                                         <img
@@ -762,20 +806,20 @@ const CountryList = () => {
                                             backgroundColor: showMap
                                                 ? blue[500]
                                                 : darkMode
-                                                    ? 'rgba(255,255,255,0.1)'
-                                                    : 'rgba(0,0,0,0.1)',
+                                                    ? 'rgba(255,255,255,0.15)'
+                                                    : 'rgba(0,0,0,0.15)',
                                             width: '60px',
                                             height: '60px',
-                                            border: '2px solid #FF5F1F',
+                                            border: '2px solid #ff5722',
                                             borderRadius: '50%',
-                                            transition: 'all 0.3s ease',
+                                            transition: 'all 0.3s ease-in-out',
                                             marginTop: showMap ? '0' : '50px',
                                             marginBottom: showMap ? '0' : '15px',
-                                            boxShadow: '0 0 10px #FF5F1F',
+                                            boxShadow: '0 0 10px rgba(255, 87, 34, 0.5)',
                                         }}
                                     >
                                         <LocationOn style={{
-                                            color: showMap ? 'white' : darkMode ? 'rgba(255,255,255,0.7)' : blue[500],
+                                            color: showMap ? 'white' : darkMode ? 'rgba(255,255,255,0.8)' : blue[500],
                                             fontSize: '30px'
                                         }} />
                                     </IconButton>
@@ -795,7 +839,9 @@ const CountryList = () => {
                             <div style={{
                                 flex: showMap ? '1' : '0.6',
                                 padding: '25px',
-                                backgroundColor: darkMode ? '#2d2d2d' : 'white'
+                                background: darkMode
+                                    ? 'linear-gradient(145deg, rgba(50, 50, 50, 0.8), rgba(30, 30, 30, 0.8))'
+                                    : 'linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9))'
                             }}>
                                 {showMap ? (
                                     <div style={{ width: '100%', height: '400px', position: 'relative' }}>
@@ -828,21 +874,23 @@ const CountryList = () => {
                                             <div
                                                 key={index}
                                                 style={{
-                                                    backgroundColor: darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,165,0,0.3)',
+                                                    background: darkMode
+                                                        ? 'linear-gradient(145deg, rgba(80, 80, 80, 0.3), rgba(50, 50, 50, 0.3))'
+                                                        : 'linear-gradient(145deg, rgba(255, 183, 77, 0.3), rgba(255, 138, 101, 0.3))',
                                                     padding: '15px',
-                                                    borderRadius: '10px',
-                                                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                                                    transition: 'all 0.2s ease',
+                                                    borderRadius: '12px',
+                                                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                                                    transition: 'all 0.3s ease-in-out',
                                                     cursor: 'default',
-                                                    border: '2px solid #FF5F1F'
+                                                    border: '2px solid #ff5722'
                                                 }}
                                                 onMouseEnter={(e) => {
                                                     e.currentTarget.style.transform = 'translateY(-3px)';
-                                                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.1)';
+                                                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)';
                                                 }}
                                                 onMouseLeave={(e) => {
                                                     e.currentTarget.style.transform = 'translateY(0)';
-                                                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
+                                                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
                                                 }}
                                             >
                                                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
@@ -861,7 +909,8 @@ const CountryList = () => {
                                                     marginLeft: '26px',
                                                     fontSize: '16px',
                                                     fontWeight: item.value === 'N/A' ? 'normal' : '500',
-                                                    opacity: item.value === 'N/A' ? 0.5 : 1
+                                                    opacity: item.value === 'N/A' ? 0.5 : 1,
+                                                    color: darkMode ? '#ffffff' : 'inherit'
                                                 }}>
                                                     {item.value}
                                                 </Typography>
@@ -926,7 +975,9 @@ const CountryList = () => {
                     </DialogTitle>
                     <DialogContent
                         style={{
-                            backgroundColor: darkMode ? '#696464' : '#fff8ef',
+                            background: darkMode
+                                ? 'linear-gradient(to bottom, #696464, #424242)'
+                                : 'linear-gradient(to bottom, #fff8ef, #f5f5f5)',
                             padding: '25px',
                             border: '2px solid #4caf50',
                             gap: '15px',
@@ -945,11 +996,22 @@ const CountryList = () => {
                                     onClick={handleDownloadPDF}
                                     variant="contained"
                                     style={{
-                                        backgroundColor: green[500],
+                                        background: darkMode
+                                            ? 'linear-gradient(45deg, #388e3c, #4caf50)'
+                                            : 'linear-gradient(45deg, #4caf50, #66bb6a)',
                                         color: 'white',
-                                        borderRadius: '10px',
+                                        borderRadius: '16px',
                                         marginBottom: '20px',
-                                        padding: '10px 20px'
+                                        padding: '10px 20px',
+                                        boxShadow: '0 3px 6px rgba(0,0,0,0.2)',
+                                        transition: 'all 0.3s ease-in-out',
+                                    }}
+                                    sx={{
+                                        '&:hover': {
+                                            background: darkMode
+                                                ? 'linear-gradient(45deg, #2e7d32, #388e3c)'
+                                                : 'linear-gradient(45deg, #388e3c, #4caf50)',
+                                        }
                                     }}
                                 >
                                     Download PDF
@@ -974,10 +1036,21 @@ const CountryList = () => {
                                                 onClick={() => setDocumentList(documentList.filter((_, i) => i !== index))}
                                                 variant="contained"
                                                 style={{
-                                                    backgroundColor: '#f44336',
+                                                    background: darkMode
+                                                        ? 'linear-gradient(45deg, #d32f2f, #f44336)'
+                                                        : 'linear-gradient(45deg, #f44336, #ef5350)',
                                                     color: 'white',
-                                                    borderRadius: '10px',
-                                                    padding: '5px 15px'
+                                                    borderRadius: '16px',
+                                                    padding: '5px 15px',
+                                                    boxShadow: '0 3px 6px rgba(0,0,0,0.2)',
+                                                    transition: 'all 0.3s ease-in-out',
+                                                }}
+                                                sx={{
+                                                    '&:hover': {
+                                                        background: darkMode
+                                                            ? 'linear-gradient(45deg, #b71c1c, #d32f2f)'
+                                                            : 'linear-gradient(45deg, #d32f2f, #f44336)',
+                                                    }
                                                 }}
                                             >
                                                 Delete
@@ -1001,21 +1074,23 @@ const CountryList = () => {
                                                 <div
                                                     key={index}
                                                     style={{
-                                                        backgroundColor: darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(76,175,80,0.3)',
+                                                        background: darkMode
+                                                            ? 'linear-gradient(145deg, rgba(80, 80, 80, 0.3), rgba(50, 50, 50, 0.3))'
+                                                            : 'linear-gradient(145deg, rgba(76, 175, 80, 0.3), rgba(129, 199, 132, 0.3))',
                                                         padding: '15px',
-                                                        borderRadius: '10px',
-                                                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                                                        transition: 'all 0.2s ease',
+                                                        borderRadius: '12px',
+                                                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                                                        transition: 'all 0.3s ease-in-out',
                                                         cursor: 'default',
                                                         border: '2px solid #4caf50'
                                                     }}
                                                     onMouseEnter={(e) => {
                                                         e.currentTarget.style.transform = 'translateY(-3px)';
-                                                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.1)';
+                                                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)';
                                                     }}
                                                     onMouseLeave={(e) => {
                                                         e.currentTarget.style.transform = 'translateY(0)';
-                                                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
+                                                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
                                                     }}
                                                 >
                                                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
@@ -1034,7 +1109,8 @@ const CountryList = () => {
                                                         marginLeft: '26px',
                                                         fontSize: '16px',
                                                         fontWeight: item.value === 'N/A' ? 'normal' : '500',
-                                                        opacity: item.value === 'N/A' ? 0.5 : 1
+                                                        opacity: item.value === 'N/A' ? 0.5 : 1,
+                                                        color: darkMode ? '#ffffff' : 'inherit'
                                                     }}>
                                                         {item.value}
                                                     </Typography>
@@ -1056,10 +1132,13 @@ const CountryList = () => {
                     bottom: '20px',
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)',
-                    color: darkMode ? '#000000' : 'white',
+                    background: darkMode
+                        ? 'linear-gradient(45deg, rgba(50, 50, 50, 0.8), rgba(30, 30, 30, 0.8))'
+                        : 'linear-gradient(45deg, rgba(255, 255, 255, 0.8), rgba(240, 240, 240, 0.8))',
+                    color: darkMode ? '#ffffff' : '#000000',
                     padding: '10px 20px',
-                    borderRadius: '5px',
+                    borderRadius: '8px',
+                    boxShadow: '0 3px 6px rgba(0,0,0,0.2)',
                     zIndex: 1500
                 }}>
                     <Typography>{alertMessage}</Typography>
