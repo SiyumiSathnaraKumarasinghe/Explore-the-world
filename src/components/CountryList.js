@@ -301,24 +301,25 @@ const CountryList = () => {
                 {/* Search Bar and Filters */}
                 <div style={{
                     display: 'flex',
-                    flexDirection: window.innerWidth < 768 ? 'column' : 'row',
-                    justifyContent: 'space-between',
+                    flexDirection: window.innerWidth < 768 ? 'row' : 'row',
+                    justifyContent: window.innerWidth < 768 ? 'space-between' : 'space-between',
                     marginBottom: '20px',
                     alignItems: 'center',
-                    gap: window.innerWidth < 768 ? '15px' : '0'
+                    gap: window.innerWidth < 768 ? '5px' : '0',
+                    flexWrap: window.innerWidth < 768 ? 'wrap' : 'nowrap',
                 }}>
                     <TextField
                         placeholder="Search by Country"
                         variant="outlined"
                         value={searchTerm}
                         onChange={handleSearchChange}
-                        fullWidth
+                        fullWidth={window.innerWidth < 768 ? false : true}
                         size="medium"
                         InputProps={{
                             startAdornment: <Search style={{ color: blue[500] }} />,
                         }}
                         sx={{
-                            maxWidth: window.innerWidth < 768 ? '100%' : '400px',
+                            maxWidth: window.innerWidth < 768 ? '150px' : '400px',
                             background: darkMode
                                 ? 'linear-gradient(135deg, rgba(50, 50, 50, 0.9), rgba(30, 30, 30, 0.9))'
                                 : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9))',
@@ -335,37 +336,38 @@ const CountryList = () => {
                             },
                             '& .MuiInputBase-input': {
                                 color: darkMode ? '#ffffff' : 'inherit',
-                                padding: '12px',
+                                padding: window.innerWidth < 768 ? '8px' : '12px',
+                                fontSize: window.innerWidth < 768 ? '14px' : '16px',
                             },
                         }}
                     />
 
                     <div style={{
                         display: 'flex',
-                        flexDirection: window.innerWidth < 768 ? 'column' : 'row',
-                        gap: '15px',
-                        flexWrap: 'wrap',
+                        flexDirection: window.innerWidth < 768 ? 'row' : 'row',
+                        gap: window.innerWidth < 768 ? '5px' : '15px',
+                        flexWrap: window.innerWidth < 768 ? 'wrap' : 'wrap',
                         justifyContent: window.innerWidth < 768 ? 'center' : 'flex-end',
                         alignItems: 'center',
-                        width: window.innerWidth < 768 ? '100%' : 'auto',
-                        marginTop: window.innerWidth < 768 ? '15px' : '0'
+                        width: window.innerWidth < 768 ? 'auto' : 'auto',
+                        marginTop: window.innerWidth < 768 ? '0' : '15px',
                     }}>
                         <div style={{
                             display: 'flex',
-                            gap: '10px',
+                            gap: '5px',
                             background: darkMode
                                 ? 'linear-gradient(135deg, rgba(80, 80, 80, 0.3), rgba(40, 40, 40, 0.3))'
                                 : 'linear-gradient(135deg, rgba(200, 200, 200, 0.2), rgba(150, 150, 150, 0.2))',
                             borderRadius: '16px',
-                            padding: '10px',
+                            padding: '5px',
                             boxShadow: '0 3px 6px rgba(0,0,0,0.2)',
                         }}>
                             <IconButton
                                 onClick={handleFavoritesFilterToggle}
                                 style={{
                                     backgroundColor: showOnlyFavorites ? 'rgba(255, 0, 0, 0.4)' : 'transparent',
-                                    width: '40px',
-                                    height: '40px',
+                                    width: window.innerWidth < 768 ? '30px' : '40px',
+                                    height: window.innerWidth < 768 ? '30px' : '40px',
                                     transition: 'all 0.3s ease-in-out',
                                 }}
                                 sx={{
@@ -376,7 +378,7 @@ const CountryList = () => {
                             >
                                 <Favorite style={{
                                     color: showOnlyFavorites ? red[500] : darkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
-                                    fontSize: '24px'
+                                    fontSize: window.innerWidth < 768 ? '20px' : '24px',
                                 }} />
                             </IconButton>
 
@@ -384,8 +386,8 @@ const CountryList = () => {
                                 onClick={handleDocumentDialogOpen}
                                 style={{
                                     backgroundColor: documentList.length > 0 ? 'rgba(0, 128, 0, 0.4)' : 'transparent',
-                                    width: '40px',
-                                    height: '40px',
+                                    width: window.innerWidth < 768 ? '30px' : '40px',
+                                    height: window.innerWidth < 768 ? '30px' : '40px',
                                     transition: 'all 0.3s ease-in-out',
                                 }}
                                 sx={{
@@ -396,24 +398,24 @@ const CountryList = () => {
                             >
                                 <Description style={{
                                     color: documentList.length > 0 ? green[500] : darkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
-                                    fontSize: '24px'
+                                    fontSize: window.innerWidth < 768 ? '20px' : '24px',
                                 }} />
                             </IconButton>
                         </div>
 
                         <div style={{
                             display: 'flex',
-                            flexDirection: window.innerWidth < 768 ? 'column' : 'row',
-                            gap: '15px',
+                            flexDirection: window.innerWidth < 768 ? 'row' : 'row',
+                            gap: window.innerWidth < 768 ? '5px' : '15px',
                             flexWrap: 'wrap',
                             justifyContent: window.innerWidth < 768 ? 'center' : 'flex-end',
-                            width: window.innerWidth < 768 ? '100%' : 'auto'
+                            width: window.innerWidth < 768 ? 'auto' : 'auto',
                         }}>
                             <FormControl
                                 size="medium"
                                 style={{
-                                    minWidth: window.innerWidth < 600 ? '100%' : '180px',
-                                    height: window.innerWidth < 600 ? '56px' : undefined,
+                                    minWidth: window.innerWidth < 768 ? '120px' : '180px',
+                                    height: window.innerWidth < 768 ? '40px' : '56px',
                                 }}
                                 sx={{
                                     borderRadius: '16px',
@@ -423,7 +425,7 @@ const CountryList = () => {
                                         background: darkMode
                                             ? 'linear-gradient(135deg, rgba(50, 50, 50, 0.9), rgba(30, 30, 30, 0.9))'
                                             : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9))',
-                                        height: window.innerWidth < 600 ? '56px' : undefined,
+                                        height: window.innerWidth < 768 ? '40px' : '56px',
                                         '& fieldset': {
                                             borderWidth: 2,
                                             borderColor: darkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)',
@@ -435,22 +437,23 @@ const CountryList = () => {
                                     },
                                     '& .MuiInputBase-input': {
                                         color: darkMode ? '#ffffff' : 'inherit',
-                                        padding: window.innerWidth < 600 ? '18px 12px 8px' : '12px',
+                                        padding: window.innerWidth < 768 ? '10px 8px' : '12px',
+                                        fontSize: window.innerWidth < 768 ? '12px' : '14px',
                                     },
                                     '& .MuiInputLabel-root': {
                                         color: darkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
-                                        fontSize: window.innerWidth < 600 ? '16px' : '14px',
-                                        transform: window.innerWidth < 600 ? 'translate(14px, 18px) scale(1)' : undefined,
+                                        fontSize: window.innerWidth < 768 ? '12px' : '14px',
+                                        transform: window.innerWidth < 768 ? 'translate(14px, 12px) scale(1)' : 'translate(14px, 18px) scale(1)',
                                         '&.Mui-focused': {
-                                            transform: window.innerWidth < 600 ? 'translate(14px, 8px) scale(0.75)' : undefined,
+                                            transform: window.innerWidth < 768 ? 'translate(14px, 2px) scale(0.75)' : 'translate(14px, 8px) scale(0.75)',
                                         },
                                         '&.MuiFormLabel-filled': {
-                                            transform: window.innerWidth < 600 ? 'translate(14px, 8px) scale(0.75)' : undefined,
+                                            transform: window.innerWidth < 768 ? 'translate(14px, 2px) scale(0.75)' : 'translate(14px, 8px) scale(0.75)',
                                         },
                                     },
                                 }}
                             >
-                                <InputLabel shrink={window.innerWidth < 600 ? false : undefined}>Filter by Region</InputLabel>
+                                <InputLabel shrink={window.innerWidth < 768 ? false : undefined}>Filter by Region</InputLabel>
                                 <Select
                                     value={selectedRegion}
                                     onChange={handleRegionChange}
@@ -468,8 +471,8 @@ const CountryList = () => {
                             <FormControl
                                 size="medium"
                                 style={{
-                                    minWidth: window.innerWidth < 600 ? '100%' : '180px',
-                                    height: window.innerWidth < 600 ? '56px' : undefined,
+                                    minWidth: window.innerWidth < 768 ? '120px' : '180px',
+                                    height: window.innerWidth < 768 ? '40px' : '56px',
                                 }}
                                 sx={{
                                     borderRadius: '16px',
@@ -479,7 +482,7 @@ const CountryList = () => {
                                         background: darkMode
                                             ? 'linear-gradient(135deg, rgba(50, 50, 50, 0.9), rgba(30, 30, 30, 0.9))'
                                             : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9))',
-                                        height: window.innerWidth < 600 ? '56px' : undefined,
+                                        height: window.innerWidth < 768 ? '40px' : '56px',
                                         '& fieldset': {
                                             borderWidth: 2,
                                             borderColor: darkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)',
@@ -491,22 +494,23 @@ const CountryList = () => {
                                     },
                                     '& .MuiInputBase-input': {
                                         color: darkMode ? '#ffffff' : 'inherit',
-                                        padding: window.innerWidth < 600 ? '18px 12px 8px' : '12px',
+                                        padding: window.innerWidth < 768 ? '10px 8px' : '12px',
+                                        fontSize: window.innerWidth < 768 ? '12px' : '14px',
                                     },
                                     '& .MuiInputLabel-root': {
                                         color: darkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
-                                        fontSize: window.innerWidth < 600 ? '16px' : '14px',
-                                        transform: window.innerWidth < 600 ? 'translate(14px, 18px) scale(1)' : undefined,
+                                        fontSize: window.innerWidth < 768 ? '12px' : '14px',
+                                        transform: window.innerWidth < 768 ? 'translate(14px, 12px) scale(1)' : 'translate(14px, 18px) scale(1)',
                                         '&.Mui-focused': {
-                                            transform: window.innerWidth < 600 ? 'translate(14px, 8px) scale(0.75)' : undefined,
+                                            transform: window.innerWidth < 768 ? 'translate(14px, 2px) scale(0.75)' : 'translate(14px, 8px) scale(0.75)',
                                         },
                                         '&.MuiFormLabel-filled': {
-                                            transform: window.innerWidth < 600 ? 'translate(14px, 8px) scale(0.75)' : undefined,
+                                            transform: window.innerWidth < 768 ? 'translate(14px, 2px) scale(0.75)' : 'translate(14px, 8px) scale(0.75)',
                                         },
                                     },
                                 }}
                             >
-                                <InputLabel shrink={window.innerWidth < 600 ? false : undefined}>Filter by Language</InputLabel>
+                                <InputLabel shrink={window.innerWidth < 768 ? false : undefined}>Filter by Language</InputLabel>
                                 <Select
                                     value={selectedLanguage}
                                     onChange={handleLanguageChange}
@@ -522,21 +526,21 @@ const CountryList = () => {
 
                         <div style={{
                             display: 'flex',
-                            gap: '10px',
+                            gap: '5px',
                             background: darkMode
                                 ? 'linear-gradient(135deg, rgba(80, 80, 80, 0.3), rgba(40, 40, 40, 0.3))'
                                 : 'linear-gradient(135deg, rgba(200, 200, 200, 0.2), rgba(150, 150, 150, 0.2))',
                             borderRadius: '16px',
-                            padding: '10px',
+                            padding: '5px',
                             boxShadow: '0 3px 6px rgba(0,0,0,0.2)',
-                            marginTop: window.innerWidth < 768 ? '15px' : '0'
+                            marginTop: window.innerWidth < 768 ? '-3px' : '0',
                         }}>
                             <IconButton
                                 onClick={handleThemeToggle}
                                 style={{
                                     backgroundColor: 'transparent',
-                                    width: '40px',
-                                    height: '40px',
+                                    width: window.innerWidth < 768 ? '30px' : '40px',
+                                    height: window.innerWidth < 768 ? '30px' : '40px',
                                     transition: 'all 0.3s ease-in-out',
                                 }}
                                 sx={{
@@ -546,8 +550,8 @@ const CountryList = () => {
                                 }}
                             >
                                 {darkMode ?
-                                    <Brightness7 style={{ color: '#FFD700', fontSize: '24px' }} /> :
-                                    <Brightness4 style={{ color: '#2196f3', fontSize: '24px' }} />
+                                    <Brightness7 style={{ color: '#FFD700', fontSize: window.innerWidth < 768 ? '20px' : '24px' }} /> :
+                                    <Brightness4 style={{ color: '#2196f3', fontSize: window.innerWidth < 768 ? '20px' : '24px' }} />
                                 }
                             </IconButton>
 
@@ -559,8 +563,8 @@ const CountryList = () => {
                                     background: darkMode
                                         ? 'linear-gradient(45deg, #388e3c, #4caf50)'
                                         : 'linear-gradient(45deg, #4caf50, #66bb6a)',
-                                    fontSize: '14px',
-                                    padding: '8px 20px',
+                                    fontSize: window.innerWidth < 768 ? '12px' : '14px',
+                                    padding: window.innerWidth < 768 ? '6px 15px' : '8px 20px',
                                     textTransform: 'none',
                                     fontWeight: 500,
                                     boxShadow: '0 3px 6px rgba(0,0,0,0.2)',
