@@ -370,7 +370,7 @@ const CountryList = () => {
 
                     <div style={{
                         display: 'flex',
-                        flexDirection: window.innerWidth < 600 ? 'column' : 'row',
+                        flexDirection: window.innerWidth < 768 ? 'row' : 'row',
                         gap: '10px',
                         flexWrap: window.innerWidth < 768 ? 'nowrap' : 'wrap',
                         justifyContent: window.innerWidth < 768 ? 'space-between' : 'flex-end',
@@ -384,7 +384,7 @@ const CountryList = () => {
                                 marginRight: window.innerWidth < 600 ? '0' : '10px',
                                 width: '48px',
                                 height: '48px',
-                                alignSelf: window.innerWidth < 600 ? 'flex-start' : 'center'
+                                alignSelf: 'center'
                             }}
                         >
                             <Favorite style={{
@@ -399,7 +399,7 @@ const CountryList = () => {
                                 marginRight: window.innerWidth < 600 ? '0' : '10px',
                                 width: '48px',
                                 height: '48px',
-                                alignSelf: window.innerWidth < 600 ? 'flex-start' : 'center'
+                                alignSelf: 'center'
                             }}
                         >
                             <Description style={{
@@ -487,7 +487,8 @@ const CountryList = () => {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '10px',
-                        marginTop: '10px'
+                        marginTop: '10px',
+                        justifyContent: window.innerWidth < 768 ? 'flex-end' : 'flex-start'
                     }}>
                         <IconButton
                             onClick={handleThemeToggle}
@@ -510,6 +511,7 @@ const CountryList = () => {
                                 backgroundColor: green[500],
                                 fontSize: '16px',
                                 padding: '10px 20px',
+                                marginLeft: 'auto'
                             }}
                         >
                             {isLoggedIn ? 'Logout' : 'Login'}
