@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Grid, Card, CardContent, Typography, TextField, FormControl, Select, MenuItem, InputLabel, Dialog, DialogContent, DialogTitle, Button, IconButton, Box } from '@mui/material';
 import { Favorite, Search, Brightness4, Brightness7, LocationOn, Description } from '@mui/icons-material';
@@ -20,6 +20,24 @@ const CountryList = () => {
     const [showMap, setShowMap] = useState(false);
     const [documentList, setDocumentList] = useState([]);
     const [showDocumentDialog, setShowDocumentDialog] = useState(false);
+    const [headerHeight, setHeaderHeight] = useState(0);
+    const headerRef = useRef(null);
+
+    // Debounce function to limit resize event handling
+    const debounce = (func, delay) => {
+        let timeoutId;
+        return (...args) => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func(...args), delay);
+        };
+    };
+
+    // Update header height
+    const updateHeaderHeight = () => {
+        if (headerRef.current) {
+            setHeaderHeight(headerRef.current.offsetHeight);
+        }
+    };
 
     // Fetch countries data from multiple endpoints of the REST Countries API
     useEffect(() => {
@@ -79,6 +97,16 @@ const CountryList = () => {
         setSelectedRegion(storedSelectedRegion);
         setSelectedLanguage(storedSelectedLanguage);
         setShowOnlyFavorites(storedShowOnlyFavorites);
+
+        // Initial header height calculation
+        updateHeaderHeight();
+    }, []);
+
+    // Add resize event listener
+    useEffect(() => {
+        const debouncedUpdateHeaderHeight = debounce(updateHeaderHeight, 200);
+        window.addEventListener('resize', debouncedUpdateHeaderHeight);
+        return () => window.removeEventListener('resize', debouncedUpdateHeaderHeight);
     }, []);
 
     // Handle theme toggle
@@ -272,16 +300,16 @@ const CountryList = () => {
             transition: 'all 0.5s ease',
             color: darkMode ? '#ffffff' : 'inherit'
         }}>
-
             {/* Fixed Title and Filters */}
             <div
+                ref={headerRef}
                 style={{
                     position: 'fixed',
                     top: 0,
                     left: 0,
                     right: 0,
                     zIndex: 1000,
-                    padding: '20px 20px',
+                    padding: '20px',
                     backgroundColor: 'transparent',
                 }}
             >
@@ -453,53 +481,50 @@ const CountryList = () => {
                             </Select>
                         </FormControl>
                     </div>
+
+                    {/* Login Button and Dark Mode Toggle */}
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        marginTop: '10px'
+                    }}>
+                        <IconButton
+                            onClick={handleThemeToggle}
+                            style={{
+                                backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
+                                marginRight: '10px',
+                            }}
+                        >
+                            {darkMode ?
+                                <Brightness7 style={{ color: '#FFD700' }} /> :
+                                <Brightness4 style={{ color: '#FFFFFF' }} />
+                            }
+                        </IconButton>
+
+                        <Button
+                            onClick={handleLoginToggle}
+                            variant="contained"
+                            style={{
+                                borderRadius: '15px',
+                                backgroundColor: green[500],
+                                fontSize: '16px',
+                                padding: '10px 20px',
+                            }}
+                        >
+                            {isLoggedIn ? 'Logout' : 'Login'}
+                        </Button>
+                    </div>
                 </div>
-            </div>
-
-            {/* Login Button and Dark Mode Toggle */}
-            <div style={{
-                position: 'absolute',
-                top: window.innerWidth < 600 ? '70px' : '20px',
-                right: '20px',
-                zIndex: 1000,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px'
-            }}>
-                <IconButton
-                    onClick={handleThemeToggle}
-                    style={{
-                        backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
-                        marginRight: '10px',
-                    }}
-                >
-                    {darkMode ?
-                        <Brightness7 style={{ color: '#FFD700' }} /> :
-                        <Brightness4 style={{ color: '#FFFFFF' }} />
-                    }
-                </IconButton>
-
-                <Button
-                    onClick={handleLoginToggle}
-                    variant="contained"
-                    style={{
-                        borderRadius: '15px',
-                        backgroundColor: green[500],
-                        fontSize: '16px',
-                        padding: '10px 20px',
-                    }}
-                >
-                    {isLoggedIn ? 'Logout' : 'Login'}
-                </Button>
             </div>
 
             {/* Scrolling Content Section */}
             <div
                 className="scroll-container"
                 style={{
-                    marginTop: window.innerWidth < 768 ? '300px' : window.innerWidth < 600 ? '400px' : '230px',
+                    marginTop: headerHeight + 20,
                     paddingBottom: '50px',
-                    height: 'calc(100vh - 250px)',
+                    height: `calc(100vh - ${headerHeight + 20}px)`,
                     overflowY: 'auto',
                     paddingLeft: '10px',
                     paddingRight: '10px',
