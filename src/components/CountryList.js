@@ -413,33 +413,41 @@ const CountryList = () => {
                                     height: window.innerWidth < 600 ? '56px' : undefined,
                                 }}
                                 sx={{
-                                    borderRadius: '16px', // Match filter bar border radius
-                                    boxShadow: '0 0 8px 2px rgba(33, 150, 243, 0.5)', // Blue glow effect
+                                    borderRadius: '16px',
+                                    boxShadow: '0 0 8px 2px rgba(33, 150, 243, 0.5)',
                                     '& .MuiOutlinedInput-root': {
                                         borderRadius: '16px',
                                         background: darkMode
                                             ? 'linear-gradient(135deg, rgba(50, 50, 50, 0.9), rgba(30, 30, 30, 0.9))'
                                             : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9))',
+                                        height: window.innerWidth < 600 ? '56px' : undefined,
                                         '& fieldset': {
                                             borderWidth: 2,
                                             borderColor: darkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)',
-                                            borderRadius: '16px'
+                                            borderRadius: '16px',
                                         },
                                         '&:hover fieldset': {
                                             borderColor: darkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)',
-                                        }
+                                        },
                                     },
                                     '& .MuiInputBase-input': {
                                         color: darkMode ? '#ffffff' : 'inherit',
-                                        padding: '12px',
+                                        padding: window.innerWidth < 600 ? '18px 12px 8px' : '12px',
                                     },
                                     '& .MuiInputLabel-root': {
                                         color: darkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
-                                        fontSize: '14px',
-                                    }
+                                        fontSize: window.innerWidth < 600 ? '16px' : '14px',
+                                        transform: window.innerWidth < 600 ? 'translate(14px, 18px) scale(1)' : undefined,
+                                        '&.Mui-focused': {
+                                            transform: window.innerWidth < 600 ? 'translate(14px, 8px) scale(0.75)' : undefined,
+                                        },
+                                        '&.MuiFormLabel-filled': {
+                                            transform: window.innerWidth < 600 ? 'translate(14px, 8px) scale(0.75)' : undefined,
+                                        },
+                                    },
                                 }}
                             >
-                                <InputLabel>Filter by Region</InputLabel>
+                                <InputLabel shrink={window.innerWidth < 600 ? false : undefined}>Filter by Region</InputLabel>
                                 <Select
                                     value={selectedRegion}
                                     onChange={handleRegionChange}
@@ -461,33 +469,41 @@ const CountryList = () => {
                                     height: window.innerWidth < 600 ? '56px' : undefined,
                                 }}
                                 sx={{
-                                    borderRadius: '16px', // Match filter bar border radius
-                                    boxShadow: '0 0 8px 2px rgba(33, 150, 243, 0.5)', // Blue glow effect
+                                    borderRadius: '16px',
+                                    boxShadow: '0 0 8px 2px rgba(33, 150, 243, 0.5)',
                                     '& .MuiOutlinedInput-root': {
                                         borderRadius: '16px',
                                         background: darkMode
                                             ? 'linear-gradient(135deg, rgba(50, 50, 50, 0.9), rgba(30, 30, 30, 0.9))'
                                             : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9))',
+                                        height: window.innerWidth < 600 ? '56px' : undefined,
                                         '& fieldset': {
                                             borderWidth: 2,
                                             borderColor: darkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)',
-                                            borderRadius: '16px'
+                                            borderRadius: '16px',
                                         },
                                         '&:hover fieldset': {
                                             borderColor: darkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)',
-                                        }
+                                        },
                                     },
                                     '& .MuiInputBase-input': {
                                         color: darkMode ? '#ffffff' : 'inherit',
-                                        padding: '12px',
+                                        padding: window.innerWidth < 600 ? '18px 12px 8px' : '12px',
                                     },
                                     '& .MuiInputLabel-root': {
                                         color: darkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
-                                        fontSize: '14px',
-                                    }
+                                        fontSize: window.innerWidth < 600 ? '16px' : '14px',
+                                        transform: window.innerWidth < 600 ? 'translate(14px, 18px) scale(1)' : undefined,
+                                        '&.Mui-focused': {
+                                            transform: window.innerWidth < 600 ? 'translate(14px, 8px) scale(0.75)' : undefined,
+                                        },
+                                        '&.MuiFormLabel-filled': {
+                                            transform: window.innerWidth < 600 ? 'translate(14px, 8px) scale(0.75)' : undefined,
+                                        },
+                                    },
                                 }}
                             >
-                                <InputLabel>Filter by Language</InputLabel>
+                                <InputLabel shrink={window.innerWidth < 600 ? false : undefined}>Filter by Language</InputLabel>
                                 <Select
                                     value={selectedLanguage}
                                     onChange={handleLanguageChange}
